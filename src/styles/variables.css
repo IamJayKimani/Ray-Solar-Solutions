@@ -1,0 +1,18 @@
+:root {
+  --night-900: #10162b;
+  --night-800: #1b2447;
+  --night-700: #23315c;
+  --amber-500: #f5a623;
+  --amber-600: #d9820b;
+  --cream-100: #faf6ee;
+  --cream-200: #f1e6d6;
+  --teal-500: #2f8f7a;
+  --text-900: #1b1f2a;
+  --text-700: #4a5565;
+  --white: #ffffff;
+  --shadow: rgba(16, 22, 43, 0.12);
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+  --page-width: 1200px;
+}
