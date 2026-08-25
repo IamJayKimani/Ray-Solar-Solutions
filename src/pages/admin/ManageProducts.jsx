@@ -1,52 +1,97 @@
+import { useState } from 'react';
+import { getProducts } from '../../data/products';
+
 function ManageProducts() {
-  const products = [
-    { name: 'Astra Solar Lantern', stock: 24, status: 'Approved' },
-    { name: 'Helio Street Light', stock: 11, status: 'Approved' },
-    { name: 'Summit Work Light', stock: 14, status: 'Flagged' },
-  ];
+  const [products, setProducts] = useState(getProducts());
+  const [search, setSearch] = useState('');
+
+  const filtered = products.filter(
+    (product) =>
+      product.name.toLowerCase().includes(search.toLowerCase()) ||
+      product.category.toLowerCase().includes(search.toLowerCase()) ||
+      product.status.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const toggleStatus = (id) => {
+    setProducts((prev) =>
+      prev.map((product) =>
+        product.id === id
+          ? {
+              ...product,
+              status: product.status === 'Approved' ? 'Flagged' : 'Approved',
+            }
+          : product
+      )
+    );
+  };
 
   return (
-    <div className="dashboard-shell container">
-      <aside className="dashboard-sidebar">
-        <h2>Admin</h2>
-        <nav>
-          <a href="/admin">Overview</a>
-          <a href="/admin/users">Manage users</a>
-          <a href="/admin/providers">Manage providers</a>
-          <a href="/admin/products">Manage products</a>
-        </nav>
-      </aside>
-
-      <main className="dashboard-main">
-        <div className="page-heading">
-          <div>
-            <span className="eyebrow">Catalog</span>
-            <h1>Manage products</h1>
-          </div>
+    <>
+      <div className="page-heading">
+        <div>
+          <span className="eyebrow">Catalog</span>
+          <h1>Manage products</h1>
         </div>
+      </div>
 
-        <div className="table-card">
-          <table>
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Stock</th>
-                <th>Status</th>
+      <div className="filters-panel">
+        <div className="search-field">
+          <span aria-hidden="true">🔍</span>
+          <input
+            className="search-input"
+            type="text"
+            placeholder="Search products by name, category, or status..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((product) => (
+              <tr key={product.id}>
+                <td>{product.name}</td>
+                <td>{product.category}</td>
+                <td>KSh {product.price.toLocaleString()}</td>
+                <td>{product.stock}</td>
+                <td>
+                  <span className={`status-badge ${product.status === 'Approved' ? 'success' : ''}`}>
+                    {product.status}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    className="mini-btn"
+                    onClick={() => toggleStatus(product.id)}
+                  >
+                    {product.status === 'Approved' ? 'Flag' : 'Approve'}
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr key={product.name}>
-                  <td>{product.name}</td>
-                  <td>{product.stock}</td>
-                  <td><span className="status-badge success">{product.status}</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </main>
-    </div>
+            ))}
+            {filtered.length === 0 && (
+              <tr>
+                <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
+                  No products found matching your search.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 

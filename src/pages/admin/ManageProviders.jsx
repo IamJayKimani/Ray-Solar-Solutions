@@ -1,52 +1,94 @@
+import { useState } from 'react';
+import { getProviders } from '../../data/providers';
+
 function ManageProviders() {
-  const providers = [
-    { name: 'Sunrise Electric Ltd', status: 'Verified', products: 19 },
-    { name: 'BrightPath Solar', status: 'Pending', products: 8 },
-    { name: 'NightGlow Energy', status: 'Verified', products: 12 },
-  ];
+  const [providers, setProviders] = useState(getProviders());
+  const [search, setSearch] = useState('');
+
+  const filtered = providers.filter(
+    (provider) =>
+      provider.name.toLowerCase().includes(search.toLowerCase()) ||
+      provider.status.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const toggleStatus = (id) => {
+    setProviders((prev) =>
+      prev.map((provider) =>
+        provider.id === id
+          ? {
+              ...provider,
+              status: provider.status === 'Verified' ? 'Suspended' : 'Verified',
+            }
+          : provider
+      )
+    );
+  };
 
   return (
-    <div className="dashboard-shell container">
-      <aside className="dashboard-sidebar">
-        <h2>Admin</h2>
-        <nav>
-          <a href="/admin">Overview</a>
-          <a href="/admin/users">Manage users</a>
-          <a href="/admin/providers">Manage providers</a>
-          <a href="/admin/products">Manage products</a>
-        </nav>
-      </aside>
-
-      <main className="dashboard-main">
-        <div className="page-heading">
-          <div>
-            <span className="eyebrow">Providers</span>
-            <h1>Manage providers</h1>
-          </div>
+    <>
+      <div className="page-heading">
+        <div>
+          <span className="eyebrow">Providers</span>
+          <h1>Manage providers</h1>
         </div>
+      </div>
 
-        <div className="table-card">
-          <table>
-            <thead>
-              <tr>
-                <th>Provider</th>
-                <th>Products</th>
-                <th>Status</th>
+      <div className="filters-panel">
+        <div className="search-field">
+          <span aria-hidden="true">🔍</span>
+          <input
+            className="search-input"
+            type="text"
+            placeholder="Search providers by name or status..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Provider</th>
+              <th>Email</th>
+              <th>Products</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((provider) => (
+              <tr key={provider.id}>
+                <td>{provider.name}</td>
+                <td>{provider.email}</td>
+                <td>{provider.products}</td>
+                <td>
+                  <span className={`status-badge ${provider.status === 'Verified' ? 'success' : provider.status === 'Pending' ? '' : ''}`}>
+                    {provider.status}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    className="mini-btn"
+                    onClick={() => toggleStatus(provider.id)}
+                  >
+                    {provider.status === 'Verified' ? 'Suspend' : 'Verify'}
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {providers.map((provider) => (
-                <tr key={provider.name}>
-                  <td>{provider.name}</td>
-                  <td>{provider.products}</td>
-                  <td><span className="status-badge success">{provider.status}</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </main>
-    </div>
+            ))}
+            {filtered.length === 0 && (
+              <tr>
+                <td colSpan="5" style={{ textAlign: 'center', padding: '2rem' }}>
+                  No providers found matching your search.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 
