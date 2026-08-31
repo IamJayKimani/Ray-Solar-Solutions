@@ -10,6 +10,7 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=900&q=80',
     description: 'Compact, weather-resistant lantern designed for homes and outdoor use with warm ambient illumination.',
     features: ['USB Rechargeable', '6-hour runtime', 'Weatherproof'],
+    status: 'Approved',
   },
   {
     id: 2,
@@ -22,6 +23,7 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1497440001374-f26997328c1b?auto=format&fit=crop&w=900&q=80',
     description: 'Durable street light with motion lighting mode, high-efficiency solar panel and long battery life.',
     features: ['Motion sensor', 'Auto dusk-to-dawn', 'High brightness'],
+    status: 'Approved',
   },
   {
     id: 3,
@@ -34,6 +36,7 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=900&q=80',
     description: 'Balanced home solar lighting kit with panel, battery, and efficient LED bulbs for everyday use.',
     features: ['Full kit', 'Smart controller', 'Low maintenance'],
+    status: 'Approved',
   },
   {
     id: 4,
@@ -46,6 +49,7 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=900&q=80',
     description: 'Powerful flood light for driveways, compounds and storefronts with all-weather protection.',
     features: ['Wide angle beam', 'Smart brightness', 'Long life LED'],
+    status: 'Approved',
   },
   {
     id: 5,
@@ -58,6 +62,7 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=900&q=80',
     description: 'Garden-friendly light that adds safe illumination without increasing power bills.',
     features: ['Low profile', 'Warm glow', 'Easy install'],
+    status: 'Approved',
   },
   {
     id: 6,
@@ -70,6 +75,7 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=900&q=80',
     description: 'Focused lighting for workshops, garages, and construction sites with rugged construction.',
     features: ['High lumen output', 'Portable', 'Rugged shell'],
+    status: 'Flagged',
   },
   {
     id: 7,
@@ -82,6 +88,7 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=900&q=80',
     description: 'A complete starter system for essential household lighting, charging and evening use.',
     features: ['Three LED bulbs', 'Phone charging', 'Easy installation'],
+    status: 'Approved',
   },
   {
     id: 8,
@@ -94,6 +101,7 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1497440001374-f26997328c1b?auto=format&fit=crop&w=900&q=80',
     description: 'Motion-activated security lighting for entrances, walkways and compounds.',
     features: ['Motion detection', 'Adjustable head', 'Rain resistant'],
+    status: 'Approved',
   },
   {
     id: 9,
@@ -106,6 +114,7 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=900&q=80',
     description: 'Low-profile pathway lights for gardens, courtyards and outdoor entertainment spaces.',
     features: ['Set of four', 'Warm white glow', 'Ground stakes included'],
+    status: 'Approved',
   },
   {
     id: 10,
@@ -118,6 +127,7 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=900&q=80',
     description: 'High-output solar lighting solution for shops, offices, schools and larger spaces.',
     features: ['High-capacity battery', 'Remote control', 'Two-year warranty'],
+    status: 'Approved',
   },
   {
     id: 11,
@@ -130,6 +140,7 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=900&q=80',
     description: 'Lightweight rechargeable lantern for camping, travel, emergency kits and outdoor nights.',
     features: ['USB-C charging', 'Compact handle', 'Three brightness modes'],
+    status: 'Approved',
   },
   {
     id: 12,
@@ -142,6 +153,7 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1497440001374-f26997328c1b?auto=format&fit=crop&w=900&q=80',
     description: 'Modern wall-mounted light for balconies, porches and exterior walls.',
     features: ['Automatic sensor', 'Wall mounting kit', 'Low maintenance'],
+    status: 'Approved',
   },
   {
     id: 13,
@@ -154,6 +166,7 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=900&q=80',
     description: 'Solar-powered comfort kit combining efficient lighting with daytime ventilation.',
     features: ['Quiet motor', 'Rechargeable battery', 'Remote control'],
+    status: 'Approved',
   },
   {
     id: 14,
@@ -166,6 +179,7 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=900&q=80',
     description: 'Professional-grade street lighting for estates, parking areas and community roads.',
     features: ['Wide coverage', 'Dusk-to-dawn control', 'Heavy-duty housing'],
+    status: 'Approved',
   },
 ];
 

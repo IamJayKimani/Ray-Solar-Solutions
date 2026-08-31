@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import PublicLayout from '../layouts/PublicLayout';
+import AdminLayout from '../layouts/AdminLayout';
 import Home from '../pages/public/Home';
 import Products from '../pages/public/Products';
 import ProductDetails from '../pages/public/ProductDetails';
@@ -119,6 +120,16 @@ function AppRoutes() {
         }
       />
 
+      <Route path="/provider" element={<ProviderDashboard />} />
+      <Route path="/provider/products" element={<ManageProviderProducts />} />
+      <Route path="/provider/products/add" element={<AddProduct />} />
+      <Route path="/provider/products/edit/:id" element={<EditProduct />} />
+      <Route element={<AdminLayout />}>
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<ManageUsers />} />
+        <Route path="/admin/providers" element={<ManageProviders />} />
+        <Route path="/admin/products" element={<ManageProducts />} />
+      </Route>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
