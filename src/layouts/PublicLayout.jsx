@@ -1,6 +1,28 @@
+import { useState } from 'react';
 import { Outlet, Link } from 'react-router-dom';
+import {
+  ChevronsLeft,
+  ChevronsRight,
+  Home,
+  Info,
+  LogIn,
+  ShoppingBag,
+  Sparkles,
+  UserRoundPlus,
+} from 'lucide-react';
+
+const landingLinks = [
+  { to: '/', label: 'Home', icon: Home },
+  { to: '/products', label: 'Products', icon: ShoppingBag },
+  { to: '/products', label: 'Shop', icon: Sparkles },
+  { to: '/login', label: 'Login', icon: LogIn },
+  { to: '/register', label: 'Register', icon: UserRoundPlus },
+  { to: '/products', label: 'Support', icon: Info },
+];
 
 function PublicLayout() {
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -26,8 +48,46 @@ function PublicLayout() {
         </div>
       </header>
 
-      <main>
-        <Outlet />
+      <main className="public-main">
+        <div className="landing-layout">
+          <aside className={`landing-sidebar ${collapsed ? 'collapsed' : ''}`} aria-label="Landing page navigation">
+            <div className="sidebar-topbar">
+              <div className="sidebar-logo">
+                <div className="sidebar-logo-mark">☀</div>
+                {!collapsed && <span>Ray Solar</span>}
+              </div>
+            </div>
+
+            <nav className="landing-nav" aria-label="Landing pages">
+              {landingLinks.map((item) => {
+                const Icon = item.icon;
+
+                return (
+                  <Link
+                    key={`${item.to}-${item.label}`}
+                    to={item.to}
+                    className="sidebar-nav-item"
+                    title={collapsed ? item.label : undefined}
+                  >
+                    <Icon className="sidebar-nav-icon" />
+                    {!collapsed && <span className="sidebar-nav-label">{item.label}</span>}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            <div className="sidebar-footer">
+              <button type="button" className="sidebar-collapse-button" onClick={() => setCollapsed((value) => !value)}>
+                {collapsed ? <ChevronsRight className="sidebar-nav-icon" /> : <ChevronsLeft className="sidebar-nav-icon" />}
+                {!collapsed && <span>Collapse</span>}
+              </button>
+            </div>
+          </aside>
+
+          <div className="public-page-content">
+            <Outlet />
+          </div>
+        </div>
       </main>
 
       <footer className="site-footer">
