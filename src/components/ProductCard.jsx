@@ -14,7 +14,7 @@ export default function ProductCard({ product }) {
 
         <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
           <span>{product.wattage}</span>
-          <span>★ {product.rating}</span>
+          <span> {product.rating}</span>
         </div>
 
         <div className="mt-6 flex items-center justify-between">

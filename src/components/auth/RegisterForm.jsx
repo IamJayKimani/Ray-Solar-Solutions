@@ -1,15 +1,21 @@
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+
+const roleRoutes = {
+  customer: '/customer',
+  provider: '/provider',
+  admin: '/admin',
+};
 
 function RegisterForm() {
-  const [role, setRole] = useState("customer");
+  const navigate = useNavigate();
+  const [role, setRole] = useState('customer');
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    console.log("Registration submitted", {
-      role,
-    });
+    localStorage.setItem('ray-solar-role', role);
+    navigate(roleRoutes[role]);
   };
 
   return (
@@ -77,10 +83,8 @@ function RegisterForm() {
         <div className="role-options">
           <button
             type="button"
-            className={`role-card ${
-              role === "customer" ? "active" : ""
-            }`}
-            onClick={() => setRole("customer")}
+            className={`role-card ${role === 'customer' ? 'active' : ''}`}
+            onClick={() => setRole('customer')}
           >
             <span className="role-icon">👤</span>
             <strong>Customer</strong>
@@ -89,8 +93,18 @@ function RegisterForm() {
 
           <button
             type="button"
-            className={`role-card ${role === "admin" ? "active" : ""}`}
-            onClick={() => setRole("admin")}
+            className={`role-card ${role === 'provider' ? 'active' : ''}`}
+            onClick={() => setRole('provider')}
+          >
+            <span className="role-icon">🏪</span>
+            <strong>Provider</strong>
+            <small>Manage inventory and add products</small>
+          </button>
+
+          <button
+            type="button"
+            className={`role-card ${role === 'admin' ? 'active' : ''}`}
+            onClick={() => setRole('admin')}
           >
             <span className="role-icon">⚙</span>
             <strong>Admin</strong>
@@ -104,7 +118,7 @@ function RegisterForm() {
       </button>
 
       <p className="auth-switch">
-        Already have an account?{" "}
+        Already have an account?{' '}
         <Link to="/login">Sign in</Link>
       </p>
     </form>
