@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { apiRequest } from '../../data/api';
 
 const roleRoutes = {
   customer: '/customer',
@@ -10,12 +11,38 @@ const roleRoutes = {
 function LoginForm() {
   const navigate = useNavigate();
   const [role, setRole] = useState('customer');
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setError('');
+    setIsSubmitting(true);
 
-    localStorage.setItem('ray-solar-role', role);
-    navigate(roleRoutes[role]);
+    const formData = new FormData(event.currentTarget);
+
+    try {
+      const data = await apiRequest('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: formData.get('email'),
+          password: formData.get('password'),
+        }),
+      });
+
+      const accountRole = data.user.role.toLowerCase();
+      if (accountRole !== role) {
+        throw new Error(`This account is registered as a ${accountRole}.`);
+      }
+
+      localStorage.setItem('ray-solar-role', accountRole);
+      localStorage.setItem('ray-solar-access-token', data.access_token);
+      navigate(roleRoutes[accountRole]);
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -75,8 +102,10 @@ function LoginForm() {
         </label>
       </div>
 
-      <button type="submit" className="auth-button">
-        Sign In
+      {error && <p className="form-error" role="alert">{error}</p>}
+
+      <button type="submit" className="auth-button" disabled={isSubmitting}>
+        {isSubmitting ? 'Signing in...' : 'Sign In'}
       </button>
 
       <p className="auth-switch">

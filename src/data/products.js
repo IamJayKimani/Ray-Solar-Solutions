@@ -1,4 +1,4 @@
-export const products = [
+/*
   {
     id: 1,
     name: 'Astra Solar Lantern',
@@ -183,21 +183,25 @@ export const products = [
   },
 ];
 
+*/
 const PRODUCTS_STORAGE_KEY = 'ray-solar-products';
+import { apiRequest, getImageUrl } from './api';
+
+export const products = [];
 
 export const getProducts = () => {
   const storedProducts = window.localStorage.getItem(PRODUCTS_STORAGE_KEY);
 
   if (!storedProducts) {
     window.localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(products));
-    return products;
+    return [];
   }
 
   try {
     return JSON.parse(storedProducts);
   } catch {
     window.localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(products));
-    return products;
+    return [];
   }
 };
 
@@ -207,3 +211,19 @@ export const saveProducts = (nextProducts) => {
 };
 
 export const getProductById = (id) => getProducts().find((product) => product.id === Number(id));
+
+export const fetchProducts = async () => {
+  const data = await apiRequest('/products');
+  return data.products.map((product) => ({
+    ...product,
+    image: getImageUrl(product.image_path),
+  }));
+};
+
+export const fetchProductById = async (id) => {
+  const data = await apiRequest(`/products/${id}`);
+  return {
+    ...data.product,
+    image: getImageUrl(data.product.image_path),
+  };
+};

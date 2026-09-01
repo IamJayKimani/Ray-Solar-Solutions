@@ -49,7 +49,7 @@ function PublicLayout() {
       </header>
 
       <main className="public-main">
-        <div className="landing-layout">
+        <div className={`landing-layout ${collapsed ? 'collapsed' : ''}`}>
           <aside className={`landing-sidebar ${collapsed ? 'collapsed' : ''}`} aria-label="Landing page navigation">
             <div className="sidebar-topbar">
               <div className="sidebar-logo">

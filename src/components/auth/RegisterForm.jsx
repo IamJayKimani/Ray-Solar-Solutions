@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { apiRequest } from '../../data/api';
 
 const roleRoutes = {
   customer: '/customer',
@@ -10,12 +11,34 @@ const roleRoutes = {
 function RegisterForm() {
   const navigate = useNavigate();
   const [role, setRole] = useState('customer');
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setError('');
+    setIsSubmitting(true);
 
-    localStorage.setItem('ray-solar-role', role);
-    navigate(roleRoutes[role]);
+    const formData = new FormData(event.currentTarget);
+
+    try {
+      await apiRequest('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({
+          first_name: formData.get('first_name'),
+          last_name: formData.get('last_name'),
+          email: formData.get('email'),
+          phone: formData.get('phone'),
+          password: formData.get('password'),
+          role,
+        }),
+      });
+      navigate('/login');
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -27,6 +50,7 @@ function RegisterForm() {
           <input
             type="text"
             id="firstName"
+            name="first_name"
             placeholder="First name"
             required
           />
@@ -38,6 +62,7 @@ function RegisterForm() {
           <input
             type="text"
             id="lastName"
+            name="last_name"
             placeholder="Last name"
             required
           />
@@ -50,6 +75,7 @@ function RegisterForm() {
         <input
           type="email"
           id="registerEmail"
+            name="email"
           placeholder="Enter your email"
           required
         />
@@ -61,6 +87,7 @@ function RegisterForm() {
         <input
           type="tel"
           id="phone"
+            name="phone"
           placeholder="e.g. 0712 345 678"
           required
         />
@@ -72,6 +99,7 @@ function RegisterForm() {
         <input
           type="password"
           id="registerPassword"
+            name="password"
           placeholder="Create a password"
           required
         />
@@ -113,8 +141,10 @@ function RegisterForm() {
         </div>
       </div>
 
-      <button type="submit" className="auth-button">
-        Create Account
+      {error && <p className="form-error" role="alert">{error}</p>}
+
+      <button type="submit" className="auth-button" disabled={isSubmitting}>
+        {isSubmitting ? 'Creating account...' : 'Create Account'}
       </button>
 
       <p className="auth-switch">

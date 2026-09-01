@@ -1,13 +1,17 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Search, SlidersHorizontal } from 'lucide-react';
-import { getProducts } from '../../data/products';
+import { fetchProducts } from '../../data/products';
 
 function Products() {
-  const products = getProducts();
+  const [products, setProducts] = useState([]);
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('all');
   const [maxPrice, setMaxPrice] = useState(1000000);
+
+  useEffect(() => {
+    fetchProducts().then(setProducts).catch(() => setProducts([]));
+  }, []);
 
   const categories = ['all', ...new Set(products.map((product) => product.category))];
 
