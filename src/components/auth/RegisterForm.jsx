@@ -1,6 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { apiRequest } from '../../data/api';
 
 const roleRoutes = {
   customer: '/customer',
@@ -11,34 +10,12 @@ const roleRoutes = {
 function RegisterForm() {
   const navigate = useNavigate();
   const [role, setRole] = useState('customer');
-  const [error, setError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setError('');
-    setIsSubmitting(true);
 
-    const formData = new FormData(event.currentTarget);
-
-    try {
-      await apiRequest('/auth/register', {
-        method: 'POST',
-        body: JSON.stringify({
-          first_name: formData.get('first_name'),
-          last_name: formData.get('last_name'),
-          email: formData.get('email'),
-          phone: formData.get('phone'),
-          password: formData.get('password'),
-          role,
-        }),
-      });
-      navigate('/login');
-    } catch (requestError) {
-      setError(requestError.message);
-    } finally {
-      setIsSubmitting(false);
-    }
+    localStorage.setItem('ray-solar-role', role);
+    navigate(roleRoutes[role]);
   };
 
   return (
