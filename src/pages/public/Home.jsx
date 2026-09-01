@@ -1,6 +1,7 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BatteryCharging, Leaf, Zap } from 'lucide-react';
-import { getProducts } from '../../data/products';
+import { fetchProducts } from '../../data/products';
 
 const highlights = [
   { title: 'Off-grid reliable', text: 'Solar lighting designed for homes, schools, clinics and businesses without unstable power supply.', icon: BatteryCharging },
@@ -9,7 +10,11 @@ const highlights = [
 ];
 
 function Home() {
-  const featured = getProducts().slice(0, 3);
+  const [featured, setFeatured] = useState([]);
+
+  useEffect(() => {
+    fetchProducts().then((products) => setFeatured(products.slice(0, 3))).catch(() => setFeatured([]));
+  }, []);
 
   return (
     <>

@@ -1,10 +1,17 @@
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Check, ShoppingCart, Star } from 'lucide-react';
-import { getProductById } from '../../data/products';
+import { fetchProductById } from '../../data/products';
 
 function ProductDetails() {
   const { id } = useParams();
-  const product = getProductById(id);
+  const [product, setProduct] = useState(null);
+
+  useEffect(() => {
+    fetchProductById(id).then(setProduct).catch(() => setProduct(undefined));
+  }, [id]);
+
+  if (product === null) return <div className="container page-shell">Loading product...</div>;
 
   if (!product) {
     return (

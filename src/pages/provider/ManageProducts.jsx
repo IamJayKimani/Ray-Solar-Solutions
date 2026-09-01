@@ -1,8 +1,15 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getProducts } from '../../data/products';
+import { fetchProducts } from '../../data/products';
 
 function ManageProducts() {
-  const products = getProducts();
+  const [products, setProducts] = useState([]);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetchProducts().then(setProducts).catch((requestError) => setError(requestError.message));
+  }, []);
+
   return (
     <div className="dashboard-shell container">
       <aside className="dashboard-sidebar">
@@ -25,6 +32,7 @@ function ManageProducts() {
           <Link to="/provider/products/add" className="btn btn-primary">Add product</Link>
         </div>
 
+        {error && <p className="form-error" role="alert">{error}</p>}
         <div className="table-card">
           <table>
             <thead>
@@ -36,7 +44,7 @@ function ManageProducts() {
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
+              {products.length ? products.map((product) => (
                 <tr key={product.id}>
                   <td>{product.name}</td>
                   <td>KSh {product.price.toLocaleString()}</td>
@@ -45,7 +53,7 @@ function ManageProducts() {
                     <Link to={`/provider/products/edit/${product.id}`} className="mini-btn">Edit</Link>
                   </td>
                 </tr>
-              ))}
+              )) : <tr><td colSpan="4">No products have been added yet.</td></tr>}
             </tbody>
           </table>
         </div>

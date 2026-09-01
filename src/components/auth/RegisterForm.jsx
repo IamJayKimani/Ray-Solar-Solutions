@@ -11,7 +11,7 @@ function RegisterForm() {
   const navigate = useNavigate();
   const [role, setRole] = useState('customer');
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     localStorage.setItem('ray-solar-role', role);
@@ -27,6 +27,7 @@ function RegisterForm() {
           <input
             type="text"
             id="firstName"
+            name="first_name"
             placeholder="First name"
             required
           />
@@ -38,6 +39,7 @@ function RegisterForm() {
           <input
             type="text"
             id="lastName"
+            name="last_name"
             placeholder="Last name"
             required
           />
@@ -50,6 +52,7 @@ function RegisterForm() {
         <input
           type="email"
           id="registerEmail"
+            name="email"
           placeholder="Enter your email"
           required
         />
@@ -61,6 +64,7 @@ function RegisterForm() {
         <input
           type="tel"
           id="phone"
+            name="phone"
           placeholder="e.g. 0712 345 678"
           required
         />
@@ -72,6 +76,7 @@ function RegisterForm() {
         <input
           type="password"
           id="registerPassword"
+            name="password"
           placeholder="Create a password"
           required
         />
@@ -113,8 +118,10 @@ function RegisterForm() {
         </div>
       </div>
 
-      <button type="submit" className="auth-button">
-        Create Account
+      {error && <p className="form-error" role="alert">{error}</p>}
+
+      <button type="submit" className="auth-button" disabled={isSubmitting}>
+        {isSubmitting ? 'Creating account...' : 'Create Account'}
       </button>
 
       <p className="auth-switch">

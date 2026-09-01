@@ -1175,6 +1175,7 @@ th {
     flex-direction: column;
     align-items: flex-start;
   }
+
 }
 
 @media (max-width: 640px) {

@@ -13,6 +13,24 @@ function LoginForm() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setError('');
+    setIsSubmitting(true);
+
+    const formData = new FormData(event.currentTarget);
+
+    try {
+      const data = await apiRequest('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: formData.get('email'),
+          password: formData.get('password'),
+        }),
+      });
+
+      const accountRole = data.user.role.toLowerCase();
+      if (accountRole !== role) {
+        throw new Error(`This account is registered as a ${accountRole}.`);
+      }
 
     localStorage.setItem('ray-solar-role', role);
     navigate(roleRoutes[role]);
@@ -75,8 +93,10 @@ function LoginForm() {
         </label>
       </div>
 
-      <button type="submit" className="auth-button">
-        Sign In
+      {error && <p className="form-error" role="alert">{error}</p>}
+
+      <button type="submit" className="auth-button" disabled={isSubmitting}>
+        {isSubmitting ? 'Signing in...' : 'Sign In'}
       </button>
 
       <p className="auth-switch">
