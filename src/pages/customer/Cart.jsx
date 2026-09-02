@@ -1,19 +1,43 @@
+import { Link } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { getCart, removeFromCart, updateCartItemQuantity } from '../../data/cart';
+
 function Cart() {
-  const items = [
-    { name: 'Astra Solar Lantern', qty: 1, price: 'KSh 4,900' },
-    { name: 'Dawn Garden Lamp', qty: 2, price: 'KSh 15,800' },
-  ];
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    setItems(getCart());
+  }, []);
+
+  const totals = useMemo(() => {
+    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const shipping = subtotal > 0 ? 1200 : 0;
+    const total = subtotal + shipping;
+
+    return { subtotal, shipping, total };
+  }, [items]);
+
+  const handleQuantityChange = (productId, nextQuantity) => {
+    const quantity = Math.max(1, Number(nextQuantity) || 1);
+    updateCartItemQuantity(productId, quantity);
+    setItems(getCart());
+  };
+
+  const handleRemove = (productId) => {
+    removeFromCart(productId);
+    setItems(getCart());
+  };
 
   return (
     <div className="dashboard-shell container">
       <aside className="dashboard-sidebar">
         <h2>Customer</h2>
         <nav>
-          <a href="/customer">Overview</a>
-          <a href="/customer/orders">My orders</a>
-          <a href="/customer/cart">Cart</a>
-          <a href="/customer/support">Support</a>
-          <a href="/customer/profile">Profile</a>
+          <Link to="/customer">Overview</Link>
+          <Link to="/customer/orders">My orders</Link>
+          <Link to="/customer/cart">Cart</Link>
+          <Link to="/customer/support">Support</Link>
+          <Link to="/customer/profile">Profile</Link>
         </nav>
       </aside>
 
@@ -26,23 +50,40 @@ function Cart() {
         </div>
 
         <div className="cart-list">
-          {items.map((item) => (
-            <div className="cart-item" key={item.name}>
-              <div>
-                <h3>{item.name}</h3>
-                <p>Qty: {item.qty}</p>
+          {items.length ? (
+            items.map((item) => (
+              <div className="cart-item" key={item.id}>
+                <div>
+                  <h3>{item.name}</h3>
+                  <label>
+                    <span>Quantity</span>
+                    <input
+                      type="number"
+                      min="1"
+                      value={item.quantity}
+                      onChange={(event) => handleQuantityChange(item.id, event.target.value)}
+                    />
+                  </label>
+                </div>
+                <div>
+                  <strong>KSh {(item.price * item.quantity).toLocaleString()}</strong>
+                  <button type="button" className="btn btn-secondary" onClick={() => handleRemove(item.id)}>Remove</button>
+                </div>
               </div>
-              <strong>{item.price}</strong>
-            </div>
-          ))}
+            ))
+          ) : (
+            <div className="empty-state">Your cart is empty. Add a few items from the shop.</div>
+          )}
         </div>
 
-        <div className="summary-box">
-          <div><span>Subtotal</span><strong>KSh 20,700</strong></div>
-          <div><span>Shipping</span><strong>KSh 1,200</strong></div>
-          <div><span>Total</span><strong>KSh 21,900</strong></div>
-          <button className="btn btn-primary full-width" type="button">Proceed to checkout</button>
-        </div>
+        {items.length > 0 && (
+          <div className="summary-box">
+            <div><span>Subtotal</span><strong>KSh {totals.subtotal.toLocaleString()}</strong></div>
+            <div><span>Shipping</span><strong>KSh {totals.shipping.toLocaleString()}</strong></div>
+            <div><span>Total</span><strong>KSh {totals.total.toLocaleString()}</strong></div>
+            <button className="btn btn-primary full-width" type="button">Proceed to checkout</button>
+          </div>
+        )}
       </main>
     </div>
   );

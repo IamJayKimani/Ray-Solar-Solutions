@@ -5,6 +5,10 @@ import Home from '../pages/public/Home';
 import Products from '../pages/public/Products';
 import ProductDetails from '../pages/public/ProductDetails';
 import CustomerDashboard from '../pages/customer/CustomerDashboard';
+import Cart from '../pages/customer/Cart';
+import Orders from '../pages/customer/Orders';
+import Profile from '../pages/customer/Profile';
+import Support from '../pages/customer/Support';
 import ProviderDashboard from '../pages/provider/ProviderDashboard';
 import ManageProviderProducts from '../pages/provider/ManageProducts';
 import AddProduct from '../pages/provider/AddProduct';
@@ -56,6 +60,38 @@ function AppRoutes() {
           </ProtectedRoleRoute>
         }
       />
+      <Route
+        path="/customer/cart"
+        element={
+          <ProtectedRoleRoute allowedRoles={['customer']}>
+            <Cart />
+          </ProtectedRoleRoute>
+        }
+      />
+      <Route
+        path="/customer/orders"
+        element={
+          <ProtectedRoleRoute allowedRoles={['customer']}>
+            <Orders />
+          </ProtectedRoleRoute>
+        }
+      />
+      <Route
+        path="/customer/profile"
+        element={
+          <ProtectedRoleRoute allowedRoles={['customer']}>
+            <Profile />
+          </ProtectedRoleRoute>
+        }
+      />
+      <Route
+        path="/customer/support"
+        element={
+          <ProtectedRoleRoute allowedRoles={['customer']}>
+            <Support />
+          </ProtectedRoleRoute>
+        }
+      />
 
       <Route
         path="/provider"
@@ -90,48 +126,11 @@ function AppRoutes() {
         }
       />
 
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoleRoute allowedRoles={['admin']}>
-            <AdminDashboard />
-          </ProtectedRoleRoute>
-        }
-      />
-      <Route
-        path="/admin/users"
-        element={
-          <ProtectedRoleRoute allowedRoles={['admin']}>
-            <ManageUsers />
-          </ProtectedRoleRoute>
-        }
-      />
-      <Route
-        path="/admin/providers"
-        element={
-          <ProtectedRoleRoute allowedRoles={['admin']}>
-            <ManageProviders />
-          </ProtectedRoleRoute>
-        }
-      />
-      <Route
-        path="/admin/products"
-        element={
-          <ProtectedRoleRoute allowedRoles={['admin']}>
-            <ManageProducts />
-          </ProtectedRoleRoute>
-        }
-      />
-
-      <Route path="/provider" element={<ProviderDashboard />} />
-      <Route path="/provider/products" element={<ManageProviderProducts />} />
-      <Route path="/provider/products/add" element={<AddProduct />} />
-      <Route path="/provider/products/edit/:id" element={<EditProduct />} />
       <Route element={<AdminLayout />}>
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/users" element={<ManageUsers />} />
-        <Route path="/admin/providers" element={<ManageProviders />} />
-        <Route path="/admin/products" element={<ManageProducts />} />
+        <Route path="/admin" element={<ProtectedRoleRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoleRoute>} />
+        <Route path="/admin/users" element={<ProtectedRoleRoute allowedRoles={['admin']}><ManageUsers /></ProtectedRoleRoute>} />
+        <Route path="/admin/providers" element={<ProtectedRoleRoute allowedRoles={['admin']}><ManageProviders /></ProtectedRoleRoute>} />
+        <Route path="/admin/products" element={<ProtectedRoleRoute allowedRoles={['admin']}><ManageProducts /></ProtectedRoleRoute>} />
       </Route>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />

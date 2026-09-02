@@ -212,18 +212,32 @@ export const saveProducts = (nextProducts) => {
 
 export const getProductById = (id) => getProducts().find((product) => product.id === Number(id));
 
+const normalizeProduct = (product) => ({
+  ...product,
+  image: getImageUrl(product.image_path),
+  status: product.is_active ? 'Approved' : 'Flagged',
+});
+
 export const fetchProducts = async () => {
   const data = await apiRequest('/products');
-  return data.products.map((product) => ({
-    ...product,
-    image: getImageUrl(product.image_path),
-  }));
+  return data.products.map(normalizeProduct);
+};
+
+export const fetchAdminProducts = async () => {
+  const data = await apiRequest('/admin/products');
+  return data.products.map(normalizeProduct);
+};
+
+export const fetchProviderProducts = async () => {
+  const currentUser = await apiRequest('/auth/me');
+  const data = await apiRequest('/products');
+
+  return data.products
+    .filter((product) => product.provider_id === currentUser.user.id)
+    .map(normalizeProduct);
 };
 
 export const fetchProductById = async (id) => {
   const data = await apiRequest(`/products/${id}`);
-  return {
-    ...data.product,
-    image: getImageUrl(data.product.image_path),
-  };
+  return normalizeProduct(data.product);
 };

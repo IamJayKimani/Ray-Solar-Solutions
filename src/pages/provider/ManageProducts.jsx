@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchProducts } from '../../data/products';
+import BrandHeader from '../../components/layout/BrandHeader';
 
 function ManageProducts() {
   const [products, setProducts] = useState([]);
@@ -11,8 +12,10 @@ function ManageProducts() {
   }, []);
 
   return (
-    <div className="dashboard-shell container">
-      <aside className="dashboard-sidebar">
+    <>
+      <BrandHeader />
+      <div className="dashboard-shell container">
+        <aside className="dashboard-sidebar">
         <h2>Provider</h2>
         <nav>
           <Link to="/provider">Overview</Link>
@@ -21,9 +24,9 @@ function ManageProducts() {
           <Link to="/provider/profile">Profile</Link>
           <Link to="/provider/support">Support</Link>
         </nav>
-      </aside>
+        </aside>
 
-      <main className="dashboard-main">
+        <main className="dashboard-main">
         <div className="page-heading">
           <div>
             <span className="eyebrow">Inventory</span>
@@ -57,8 +60,9 @@ function ManageProducts() {
             </tbody>
           </table>
         </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </>
   );
 }
 

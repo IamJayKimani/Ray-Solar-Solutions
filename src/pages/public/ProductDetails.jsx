@@ -1,15 +1,24 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Check, ShoppingCart, Star } from 'lucide-react';
 import { fetchProductById } from '../../data/products';
+import { addToCart } from '../../data/cart';
 
 function ProductDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     fetchProductById(id).then(setProduct).catch(() => setProduct(undefined));
   }, [id]);
+
+  const handleAddToCart = () => {
+    if (!product) return;
+    addToCart(product, quantity);
+    navigate('/customer/cart');
+  };
 
   if (product === null) return <div className="container page-shell">Loading product...</div>;
 
@@ -56,10 +65,20 @@ function ProductDetails() {
           </ul>
 
           <div className="detail-actions">
-            <button className="btn btn-primary" type="button">
+            <label className="quantity-picker">
+              <span>Quantity</span>
+              <input
+                type="number"
+                min="1"
+                max={product.stock}
+                value={quantity}
+                onChange={(event) => setQuantity(Math.max(1, Math.min(product.stock, Number(event.target.value) || 1)))}
+              />
+            </label>
+            <button className="btn btn-primary" type="button" onClick={handleAddToCart}>
               <ShoppingCart size={16} /> Add to cart
             </button>
-            <button className="btn btn-secondary" type="button">Buy now</button>
+            <button className="btn btn-secondary" type="button" onClick={handleAddToCart}>Buy now</button>
           </div>
         </div>
       </div>
