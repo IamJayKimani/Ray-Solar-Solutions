@@ -1,81 +1,177 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { getProducts, saveProducts } from '../../data/products';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { apiRequest } from "../../data/api";
 
-function AddProduct() {
-  const navigate = useNavigate();
-  const [form, setForm] = useState({
-    name: '', category: '', price: '', stock: '', wattage: '', image: '', description: '', features: '',
-  });
+const initialForm = {
+  name: "",
+  category: "Outdoor Solar",
+  price: "19000",
+  stock: "25",
+  wattage: "18W",
+  description: "",
+  features: "Motion sensor, Weatherproof",
+};
 
-  const updateField = (event) => setForm({ ...form, [event.target.name]: event.target.value });
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const newProduct = {
-      id: Date.now(),
-      name: form.name,
-      category: form.category,
-      price: Number(form.price),
-      rating: 5,
-      wattage: form.wattage,
-      stock: Number(form.stock),
-      image: form.image || 'https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=900&q=80',
-      description: form.description,
-      features: form.features.split(',').map((feature) => feature.trim()).filter(Boolean),
-    };
-
-    saveProducts([...getProducts(), newProduct]);
-    navigate('/provider/products');
-  };
-
+function Field({ label, children }) {
   return (
-    <div className="dashboard-shell container">
-      <aside className="dashboard-sidebar">
-        <h2>Provider</h2>
-        <nav>
-          <Link to="/provider">Overview</Link>
-          <Link to="/provider/products">Manage products</Link>
-          <Link to="/provider/products/add">Add product</Link>
-          <Link to="/provider/profile">Profile</Link>
-          <Link to="/provider/support">Support</Link>
-        </nav>
-      </aside>
-
-      <main className="dashboard-main">
-        <div className="page-heading">
-          <div>
-            <span className="eyebrow">New listing</span>
-            <h1>Add product</h1>
-          </div>
-        </div>
-
-        <form className="profile-card" onSubmit={handleSubmit}>
-          <label>
-            <span>Product name</span>
-            <input name="name" value={form.name} onChange={updateField} type="text" placeholder="Enter product name" required />
-          </label>
-          <label>
-            <span>Category</span>
-            <input name="category" value={form.category} onChange={updateField} type="text" placeholder="Outdoor Solar" required />
-          </label>
-          <label>
-            <span>Price</span>
-            <input name="price" value={form.price} onChange={updateField} type="number" min="0" max="1000000" placeholder="19000" required />
-          </label>
-          <label>
-            <span>Stock</span>
-            <input name="stock" value={form.stock} onChange={updateField} type="number" min="0" placeholder="25" required />
-          </label>
-          <label><span>Wattage</span><input name="wattage" value={form.wattage} onChange={updateField} type="text" placeholder="18W" required /></label>
-          <label><span>Image URL</span><input name="image" value={form.image} onChange={updateField} type="url" placeholder="https://..." /></label>
-          <label><span>Description</span><input name="description" value={form.description} onChange={updateField} type="text" placeholder="Describe the product" required /></label>
-          <label><span>Features</span><input name="features" value={form.features} onChange={updateField} type="text" placeholder="Motion sensor, Weatherproof" /></label>
-          <button className="btn btn-primary" type="submit">Save product</button>
-        </form>
-      </main>
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-slate-800 mb-1.5">
+        {label}
+      </label>
+      {children}
     </div>
   );
 }
 
-export default AddProduct;
+const inputClass =
+  "w-full h-10 rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm text-slate-800 placeholder:text-stone-400 outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100";
+
+export default function AddProductCard({ onSave = () => {} }) {
+  const [form, setForm] = useState(initialForm);
+  const [imageFile, setImageFile] = useState(null);
+  const [fileName, setFileName] = useState("No file chosen");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+
+  const update = (key) => (e) =>
+    setForm((prev) => ({ ...prev, [key]: e.target.value }));
+
+  const handleFile = (e) => {
+    const file = e.target.files?.[0];
+    setImageFile(file || null);
+    setFileName(file ? file.name : "No file chosen");
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError("");
+    setIsSubmitting(true);
+
+    const body = new FormData();
+    Object.entries(form).forEach(([key, value]) => body.append(key, value));
+    body.set("features", JSON.stringify(form.features.split(",").map((feature) => feature.trim()).filter(Boolean)));
+    if (imageFile) body.append("image", imageFile);
+
+    try {
+      const data = await apiRequest('/products', { method: 'POST', body });
+      onSave(data.product);
+      navigate('/provider/products');
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="mx-auto grid max-w-[760px] grid-cols-1 gap-x-5 bg-white rounded-2xl p-6 shadow-sm border border-stone-100 sm:grid-cols-2">
+      <h2 className="font-serif text-xl font-medium text-slate-800 mb-6 sm:col-span-2">
+        Add product
+      </h2>
+
+      <div className="sm:col-span-2">
+        <Field label="Product name">
+        <input
+          type="text"
+          placeholder="Enter product name"
+          value={form.name}
+          onChange={update("name")}
+          className={inputClass}
+        />
+        </Field>
+      </div>
+
+      <div className="flex gap-3">
+        <div className="flex-1">
+          <Field label="Category">
+            <input
+              type="text"
+              value={form.category}
+              onChange={update("category")}
+              className={inputClass}
+            />
+          </Field>
+        </div>
+        <div className="flex-1">
+          <Field label="Wattage">
+            <input
+              type="text"
+              value={form.wattage}
+              onChange={update("wattage")}
+              className={inputClass}
+            />
+          </Field>
+        </div>
+      </div>
+
+      <div className="flex gap-3">
+        <div className="flex-1">
+          <Field label="Price (KES)">
+            <input
+              type="text"
+              value={form.price}
+              onChange={update("price")}
+              className={inputClass}
+            />
+          </Field>
+        </div>
+        <div className="flex-1">
+          <Field label="Stock">
+            <input
+              type="text"
+              value={form.stock}
+              onChange={update("stock")}
+              className={inputClass}
+            />
+          </Field>
+        </div>
+      </div>
+
+      <div className="sm:col-span-2">
+        <Field label="Product image">
+        <div className="flex items-center gap-2.5 rounded-lg border-[1.5px] border-dashed border-amber-300 bg-amber-50 p-3.5">
+          <span className="flex-1 text-sm text-stone-500">{fileName}</span>
+          <label className="inline-flex h-[30px] cursor-pointer items-center rounded-lg border border-amber-300 bg-white px-3 text-xs text-amber-700">
+            Choose file
+            <input type="file" onChange={handleFile} className="hidden" />
+          </label>
+        </div>
+        </Field>
+      </div>
+
+      <div>
+        <Field label="Description">
+        <textarea
+          placeholder="Describe the product"
+          rows={3}
+          value={form.description}
+          onChange={update("description")}
+          className={`${inputClass} h-auto py-2.5 resize-y`}
+        />
+        </Field>
+      </div>
+
+      <div>
+        <Field label="Features">
+        <input
+          type="text"
+          value={form.features}
+          onChange={update("features")}
+          className={inputClass}
+        />
+        </Field>
+      </div>
+
+      {error && <p className="form-error sm:col-span-2" role="alert">{error}</p>}
+
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="mt-2 h-12 w-full rounded-full bg-gradient-to-br from-amber-400 to-amber-700 text-sm font-medium text-amber-50 sm:col-span-2"
+      >
+        {isSubmitting ? 'Saving...' : 'Save product'}
+      </button>
+    </form>
+  );
+}

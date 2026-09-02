@@ -1,15 +1,21 @@
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+
+const roleRoutes = {
+  customer: '/customer',
+  provider: '/provider',
+  admin: '/admin',
+};
 
 function RegisterForm() {
-  const [role, setRole] = useState("customer");
+  const navigate = useNavigate();
+  const [role, setRole] = useState('customer');
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    console.log("Registration submitted", {
-      role,
-    });
+    localStorage.setItem('ray-solar-role', role);
+    navigate(roleRoutes[role]);
   };
 
   return (
@@ -21,6 +27,7 @@ function RegisterForm() {
           <input
             type="text"
             id="firstName"
+            name="first_name"
             placeholder="First name"
             required
           />
@@ -32,6 +39,7 @@ function RegisterForm() {
           <input
             type="text"
             id="lastName"
+            name="last_name"
             placeholder="Last name"
             required
           />
@@ -44,6 +52,7 @@ function RegisterForm() {
         <input
           type="email"
           id="registerEmail"
+            name="email"
           placeholder="Enter your email"
           required
         />
@@ -55,6 +64,7 @@ function RegisterForm() {
         <input
           type="tel"
           id="phone"
+            name="phone"
           placeholder="e.g. 0712 345 678"
           required
         />
@@ -66,6 +76,7 @@ function RegisterForm() {
         <input
           type="password"
           id="registerPassword"
+            name="password"
           placeholder="Create a password"
           required
         />
@@ -77,10 +88,8 @@ function RegisterForm() {
         <div className="role-options">
           <button
             type="button"
-            className={`role-card ${
-              role === "customer" ? "active" : ""
-            }`}
-            onClick={() => setRole("customer")}
+            className={`role-card ${role === 'customer' ? 'active' : ''}`}
+            onClick={() => setRole('customer')}
           >
             <span className="role-icon">👤</span>
             <strong>Customer</strong>
@@ -89,8 +98,18 @@ function RegisterForm() {
 
           <button
             type="button"
-            className={`role-card ${role === "admin" ? "active" : ""}`}
-            onClick={() => setRole("admin")}
+            className={`role-card ${role === 'provider' ? 'active' : ''}`}
+            onClick={() => setRole('provider')}
+          >
+            <span className="role-icon">🏪</span>
+            <strong>Provider</strong>
+            <small>Manage inventory and add products</small>
+          </button>
+
+          <button
+            type="button"
+            className={`role-card ${role === 'admin' ? 'active' : ''}`}
+            onClick={() => setRole('admin')}
           >
             <span className="role-icon">⚙</span>
             <strong>Admin</strong>
@@ -99,12 +118,14 @@ function RegisterForm() {
         </div>
       </div>
 
-      <button type="submit" className="auth-button">
-        Create Account
+      {error && <p className="form-error" role="alert">{error}</p>}
+
+      <button type="submit" className="auth-button" disabled={isSubmitting}>
+        {isSubmitting ? 'Creating account...' : 'Create Account'}
       </button>
 
       <p className="auth-switch">
-        Already have an account?{" "}
+        Already have an account?{' '}
         <Link to="/login">Sign in</Link>
       </p>
     </form>
