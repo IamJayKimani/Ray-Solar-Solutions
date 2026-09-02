@@ -1,117 +1,65 @@
-import { useEffect, useState } from 'react';
-import { apiRequest } from '../../data/api';
-import { fetchAdminProducts } from '../../data/products';
+import React from 'react';
 
-function ManageProducts() {
-  const [products, setProducts] = useState([]);
-  const [search, setSearch] = useState('');
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    fetchAdminProducts().then(setProducts).catch((requestError) => setError(requestError.message));
-  }, []);
-
-  const filtered = products.filter(
-    (product) =>
-      product.name.toLowerCase().includes(search.toLowerCase()) ||
-      product.category.toLowerCase().includes(search.toLowerCase()) ||
-      product.status.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const toggleStatus = async (id, currentStatus) => {
-    try {
-      const nextStatus = currentStatus === 'Approved';
-      await apiRequest(`/admin/products/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify({ is_active: nextStatus }),
-      });
-
-      setProducts((prev) =>
-        prev.map((product) =>
-          product.id === id
-            ? {
-                ...product,
-                is_active: nextStatus,
-                status: nextStatus ? 'Approved' : 'Flagged',
-              }
-            : product
-        )
-      );
-    } catch (requestError) {
-      setError(requestError.message);
-    }
-  };
-
+export default function ProductsModeration({ products = [], onToggleProductStatus }) {
   return (
-    <>
+    <main className="dashboard-main">
       <div className="page-heading">
         <div>
-          <span className="eyebrow">Catalog</span>
-          <h1>Manage products</h1>
+          <span className="eyebrow">Admin portal</span>
+          <h1>Product Moderation</h1>
         </div>
       </div>
 
-      {error && <p className="form-error" role="alert">{error}</p>}
-
-      <div className="filters-panel">
-        <div className="search-field">
-          <span aria-hidden="true">🔍</span>
-          <input
-            className="search-input"
-            type="text"
-            placeholder="Search products by name, category, or status..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-      </div>
-
-      <div className="table-card">
-        <table>
+      <div className="ticket-list" style={{ background: '#fff', borderRadius: '8px', padding: '16px' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr>
-              <th>Product</th>
-              <th>Category</th>
-              <th>Price</th>
-              <th>Stock</th>
-              <th>Status</th>
-              <th>Actions</th>
+            <tr style={{ borderBottom: '2px solid #e2e8f0', textAlign: 'left' }}>
+              <th style={{ padding: '12px' }}>ID</th>
+              <th style={{ padding: '12px' }}>Product Title</th>
+              <th style={{ padding: '12px' }}>Category</th>
+              <th style={{ padding: '12px' }}>Price</th>
+              <th style={{ padding: '12px' }}>Status</th>
+              <th style={{ padding: '12px' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {filtered.map((product) => (
-              <tr key={product.id}>
-                <td>{product.name}</td>
-                <td>{product.category}</td>
-                <td>KSh {product.price.toLocaleString()}</td>
-                <td>{product.stock}</td>
-                <td>
-                  <span className={`status-badge ${product.status === 'Approved' ? 'success' : ''}`}>
-                    {product.status}
-                  </span>
-                </td>
-                <td>
-                  <button
-                    className="mini-btn"
-                    onClick={() => toggleStatus(product.id, product.status)}
-                  >
-                    {product.status === 'Approved' ? 'Flag' : 'Approve'}
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {filtered.length === 0 && (
+            {products.length === 0 ? (
               <tr>
-                <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
-                  No products found matching your search.
-                </td>
+                <td colSpan="6" style={{ padding: '20px', textAlign: 'center' }}>No products available.</td>
               </tr>
+            ) : (
+              products.map((product) => (
+                <tr key={product.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                  <td style={{ padding: '12px' }}>#{product.id}</td>
+                  <td style={{ padding: '12px' }}>{product.name}</td>
+                  <td style={{ padding: '12px' }}>{product.category || 'Solar'}</td>
+                  <td style={{ padding: '12px' }}>${product.price}</td>
+                  <td style={{ padding: '12px' }}>
+                    <span className={product.active ? 'status-badge success' : 'status-badge'}>
+                      {product.active ? 'Live' : 'Hidden'}
+                    </span>
+                  </td>
+                  <td style={{ padding: '12px' }}>
+                    <button
+                      onClick={() => onToggleProductStatus(product.id, !product.active)}
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: '4px',
+                        border: 'none',
+                        color: '#fff',
+                        background: product.active ? '#ef4444' : '#22c55e',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {product.active ? 'Unpublish' : 'Publish'}
+                    </button>
+                  </td>
+                </tr>
+              ))
             )}
           </tbody>
         </table>
       </div>
-    </>
+    </main>
   );
 }
-
-export default ManageProducts;

@@ -1,81 +1,71 @@
-import { useEffect, useState } from 'react';
-import { apiRequest } from '../../data/api';
-import StatCard from '../../components/dashboard/StatCard';
+import React, { useState } from "react";
+import ManageUsers from "./ManageUsers";
+import ManageProviders from "./ManageProviders";
+import ManageProducts from "./ManageProducts";
 
-function AdminDashboard() {
-  const [metrics, setMetrics] = useState({
-    total_users: 0,
-    total_customers: 0,
-    total_providers: 0,
-    total_products: 0,
-  });
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    apiRequest('/admin/analytics')
-      .then((data) => setMetrics(data))
-      .catch((requestError) => setError(requestError.message));
-  }, []);
-
-  const stats = [
-    { title: 'Users', value: metrics.total_users.toLocaleString() },
-    { title: 'Customers', value: metrics.total_customers.toLocaleString() },
-    { title: 'Providers', value: metrics.total_providers.toLocaleString() },
-    { title: 'Products', value: metrics.total_products.toLocaleString() },
-  ];
+export default function AdminDashboard() {
+  const [activeTab, setActiveTab] = useState("users");
 
   return (
-    <>
-      <div className="page-heading">
-        <div>
-          <span className="eyebrow">System overview</span>
-          <h1>Platform analytics</h1>
-        </div>
-      </div>
+    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "sans-serif" }}>
+      {/* Sidebar Navigation */}
+      <aside style={{ width: "240px", backgroundColor: "#1e293b", color: "#fff", padding: "1.5rem" }}>
+        <h2 style={{ fontSize: "1.25rem", marginBottom: "2rem", fontWeight: "bold" }}>Admin Portal</h2>
+        <nav style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+          <button
+            onClick={() => setActiveTab("users")}
+            style={{
+              textAlign: "left",
+              padding: "0.75rem 1rem",
+              borderRadius: "0.375rem",
+              border: "none",
+              cursor: "pointer",
+              backgroundColor: activeTab === "users" ? "#3b82f6" : "transparent",
+              color: "#fff",
+              fontWeight: activeTab === "users" ? "600" : "400"
+            }}
+          >
+            Users Management
+          </button>
+          <button
+            onClick={() => setActiveTab("providers")}
+            style={{
+              textAlign: "left",
+              padding: "0.75rem 1rem",
+              borderRadius: "0.375rem",
+              border: "none",
+              cursor: "pointer",
+              backgroundColor: activeTab === "providers" ? "#3b82f6" : "transparent",
+              color: "#fff",
+              fontWeight: activeTab === "providers" ? "600" : "400"
+            }}
+          >
+            Providers Management
+          </button>
+          <button
+            onClick={() => setActiveTab("products")}
+            style={{
+              textAlign: "left",
+              padding: "0.75rem 1rem",
+              borderRadius: "0.375rem",
+              border: "none",
+              cursor: "pointer",
+              backgroundColor: activeTab === "products" ? "#3b82f6" : "transparent",
+              color: "#fff",
+              fontWeight: activeTab === "products" ? "600" : "400"
+            }}
+          >
+            Products Moderation
+          </button>
+        </nav>
+      </aside>
 
-      {error && <p className="form-error" role="alert">{error}</p>}
-
-      <div className="stats-grid">
-        {stats.map((item) => (
-          <StatCard key={item.title} title={item.title} value={item.value} />
-        ))}
-      </div>
-
-      <div className="table-card">
-        <table>
-          <thead>
-            <tr>
-              <th>Metric</th>
-              <th>Value</th>
-              <th>Trend</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Registered users</td>
-              <td>{metrics.total_users}</td>
-              <td><span className="status-badge success">Live</span></td>
-            </tr>
-            <tr>
-              <td>Customer accounts</td>
-              <td>{metrics.total_customers}</td>
-              <td><span className="status-badge success">Live</span></td>
-            </tr>
-            <tr>
-              <td>Provider accounts</td>
-              <td>{metrics.total_providers}</td>
-              <td><span className="status-badge success">Live</span></td>
-            </tr>
-            <tr>
-              <td>Catalog products</td>
-              <td>{metrics.total_products}</td>
-              <td><span className="status-badge success">Live</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </>
+      {/* Main Content Area */}
+      <main style={{ flex: 1, backgroundColor: "#f8fafc", padding: "2rem" }}>
+        {activeTab === "users" && <ManageUsers />}
+        {activeTab === "providers" && <ManageProviders />}
+        {activeTab === "products" && <ManageProducts />}
+      </main>
+    </div>
   );
 }
-
-export default AdminDashboard;

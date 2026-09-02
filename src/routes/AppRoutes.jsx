@@ -38,6 +38,9 @@ function ProtectedRoleRoute({ allowedRoles, children }) {
   return children;
 }
 
+// Person 6 (Admin) Import
+import AdminDashboard from '../pages/admin/AdminDashboard';
+
 function AppRoutes() {
   return (
     <Routes>
@@ -132,6 +135,9 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+
+      {/* Person 6 (Admin) Route */}
+      <Route path="/admin" element={<AdminDashboard />} />
     </Routes>
   );
 }
