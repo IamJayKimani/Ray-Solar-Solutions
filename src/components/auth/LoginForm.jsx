@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { apiRequest } from '../../data/api';
 
 const roleRoutes = {
   customer: '/customer',
@@ -9,9 +10,10 @@ const roleRoutes = {
 
 function LoginForm() {
   const navigate = useNavigate();
-  const [role, setRole] = useState('customer');
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setError('');
     setIsSubmitting(true);
@@ -28,12 +30,16 @@ function LoginForm() {
       });
 
       const accountRole = data.user.role.toLowerCase();
-      if (accountRole !== role) {
-        throw new Error(`This account is registered as a ${accountRole}.`);
-      }
+      const destination = roleRoutes[accountRole] || '/customer';
 
-    localStorage.setItem('ray-solar-role', role);
-    navigate(roleRoutes[role]);
+      localStorage.setItem('ray-solar-role', accountRole);
+      localStorage.setItem('ray-solar-access-token', data.access_token);
+      navigate(destination);
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -66,24 +72,6 @@ function LoginForm() {
           placeholder="Enter your password"
           required
         />
-      </div>
-
-      <div className="form-group">
-        <label>Role</label>
-        <div className="role-options">
-          {Object.entries(roleRoutes).map(([value, path]) => (
-            <button
-              key={value}
-              type="button"
-              className={`role-card ${role === value ? 'active' : ''}`}
-              onClick={() => setRole(value)}
-            >
-              <span className="role-icon">{value === 'customer' ? '👤' : value === 'provider' ? '🏪' : '⚙'}</span>
-              <strong>{value === 'customer' ? 'Customer' : value === 'provider' ? 'Provider' : 'Admin'}</strong>
-              <small>{path === '/customer' ? 'Shop and manage orders' : path === '/provider' ? 'Manage products and inventory' : 'Manage the platform'}</small>
-            </button>
-          ))}
-        </div>
       </div>
 
       <div className="remember-row">

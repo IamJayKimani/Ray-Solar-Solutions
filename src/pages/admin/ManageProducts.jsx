@@ -1,9 +1,15 @@
-import { useState } from 'react';
-import { getProducts } from '../../data/products';
+import { useEffect, useState } from 'react';
+import { apiRequest } from '../../data/api';
+import { fetchAdminProducts } from '../../data/products';
 
 function ManageProducts() {
-  const [products, setProducts] = useState(getProducts());
+  const [products, setProducts] = useState([]);
   const [search, setSearch] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetchAdminProducts().then(setProducts).catch((requestError) => setError(requestError.message));
+  }, []);
 
   const filtered = products.filter(
     (product) =>
@@ -12,17 +18,28 @@ function ManageProducts() {
       product.status.toLowerCase().includes(search.toLowerCase())
   );
 
-  const toggleStatus = (id) => {
-    setProducts((prev) =>
-      prev.map((product) =>
-        product.id === id
-          ? {
-              ...product,
-              status: product.status === 'Approved' ? 'Flagged' : 'Approved',
-            }
-          : product
-      )
-    );
+  const toggleStatus = async (id, currentStatus) => {
+    try {
+      const nextStatus = currentStatus === 'Approved';
+      await apiRequest(`/admin/products/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ is_active: nextStatus }),
+      });
+
+      setProducts((prev) =>
+        prev.map((product) =>
+          product.id === id
+            ? {
+                ...product,
+                is_active: nextStatus,
+                status: nextStatus ? 'Approved' : 'Flagged',
+              }
+            : product
+        )
+      );
+    } catch (requestError) {
+      setError(requestError.message);
+    }
   };
 
   return (
@@ -33,6 +50,8 @@ function ManageProducts() {
           <h1>Manage products</h1>
         </div>
       </div>
+
+      {error && <p className="form-error" role="alert">{error}</p>}
 
       <div className="filters-panel">
         <div className="search-field">
@@ -74,7 +93,7 @@ function ManageProducts() {
                 <td>
                   <button
                     className="mini-btn"
-                    onClick={() => toggleStatus(product.id)}
+                    onClick={() => toggleStatus(product.id, product.status)}
                   >
                     {product.status === 'Approved' ? 'Flag' : 'Approve'}
                   </button>

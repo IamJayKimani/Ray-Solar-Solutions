@@ -1,16 +1,30 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-
-const stats = [
-  { title: 'Products', value: '42' },
-  { title: 'Sales', value: 'KSh 245k' },
-  { title: 'Orders', value: '118' },
-  { title: 'Support', value: '9 open' },
-];
+import { fetchProviderProducts } from '../../data/products';
+import BrandHeader from '../../components/layout/BrandHeader';
 
 function ProviderDashboard() {
+  const [products, setProducts] = useState([]);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetchProviderProducts()
+      .then(setProducts)
+      .catch((requestError) => setError(requestError.message));
+  }, []);
+
+  const stats = [
+    { title: 'Products', value: products.length.toLocaleString() },
+    { title: 'Inventory value', value: `KSh ${products.reduce((sum, product) => sum + product.price * product.stock, 0).toLocaleString()}` },
+    { title: 'Listed stock', value: products.reduce((sum, product) => sum + product.stock, 0).toLocaleString() },
+    { title: 'Status', value: products.length ? 'Live' : 'Empty' },
+  ];
+
   return (
-    <div className="dashboard-shell container">
-      <aside className="dashboard-sidebar">
+    <>
+      <BrandHeader />
+      <div className="dashboard-shell container">
+        <aside className="dashboard-sidebar">
         <h2>Provider</h2>
         <nav>
           <Link to="/provider">Overview</Link>
@@ -19,9 +33,9 @@ function ProviderDashboard() {
           <Link to="/provider/profile">Profile</Link>
           <Link to="/provider/support">Support</Link>
         </nav>
-      </aside>
+        </aside>
 
-      <main className="dashboard-main">
+        <main className="dashboard-main">
         <div className="page-heading">
           <div>
             <span className="eyebrow">Provider dashboard</span>
@@ -29,6 +43,8 @@ function ProviderDashboard() {
           </div>
           <Link to="/provider/products/add" className="btn btn-primary">Add new product</Link>
         </div>
+
+        {error && <p className="form-error" role="alert">{error}</p>}
 
         <div className="stats-grid">
           {stats.map((item) => (
@@ -38,8 +54,9 @@ function ProviderDashboard() {
             </div>
           ))}
         </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </>
   );
 }
 

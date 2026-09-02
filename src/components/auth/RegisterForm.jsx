@@ -4,7 +4,6 @@ import { useState } from 'react';
 const roleRoutes = {
   customer: '/customer',
   provider: '/provider',
-  admin: '/admin',
 };
 
 function RegisterForm() {
@@ -104,16 +103,6 @@ function RegisterForm() {
             <span className="role-icon">🏪</span>
             <strong>Provider</strong>
             <small>Manage inventory and add products</small>
-          </button>
-
-          <button
-            type="button"
-            className={`role-card ${role === 'admin' ? 'active' : ''}`}
-            onClick={() => setRole('admin')}
-          >
-            <span className="role-icon">⚙</span>
-            <strong>Admin</strong>
-            <small>Manage products and orders</small>
           </button>
         </div>
       </div>

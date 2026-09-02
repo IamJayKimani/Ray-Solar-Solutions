@@ -1,9 +1,14 @@
-import { useState } from 'react';
-import { getUsers } from '../../data/users';
+import { useEffect, useState } from 'react';
+import { fetchUsers, updateUserStatus } from '../../data/users';
 
 function ManageUsers() {
-  const [users, setUsers] = useState(getUsers());
+  const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetchUsers().then(setUsers).catch((requestError) => setError(requestError.message));
+  }, []);
 
   const filtered = users.filter(
     (user) =>
@@ -12,14 +17,21 @@ function ManageUsers() {
       user.role.toLowerCase().includes(search.toLowerCase())
   );
 
-  const toggleStatus = (id) => {
-    setUsers((prev) =>
-      prev.map((user) =>
-        user.id === id
-          ? { ...user, status: user.status === 'Active' ? 'Suspended' : 'Active' }
-          : user
-      )
-    );
+  const toggleStatus = async (id, currentStatus) => {
+    try {
+      const nextStatus = currentStatus === 'Active';
+      await updateUserStatus(id, nextStatus);
+
+      setUsers((prev) =>
+        prev.map((user) =>
+          user.id === id
+            ? { ...user, is_active: nextStatus, status: nextStatus ? 'Active' : 'Suspended' }
+            : user
+        )
+      );
+    } catch (requestError) {
+      setError(requestError.message);
+    }
   };
 
   return (
@@ -30,6 +42,8 @@ function ManageUsers() {
           <h1>Manage users</h1>
         </div>
       </div>
+
+      {error && <p className="form-error" role="alert">{error}</p>}
 
       <div className="filters-panel">
         <div className="search-field">
@@ -69,7 +83,7 @@ function ManageUsers() {
                 <td>
                   <button
                     className="mini-btn"
-                    onClick={() => toggleStatus(user.id)}
+                    onClick={() => toggleStatus(user.id, user.status)}
                   >
                     {user.status === 'Active' ? 'Suspend' : 'Activate'}
                   </button>

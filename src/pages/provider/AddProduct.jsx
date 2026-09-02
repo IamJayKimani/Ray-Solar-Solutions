@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../../data/api";
+import BrandHeader from '../../components/layout/BrandHeader';
 
 const initialForm = {
   name: "",
@@ -65,7 +66,9 @@ export default function AddProductCard({ onSave = () => {} }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto grid max-w-[760px] grid-cols-1 gap-x-5 bg-white rounded-2xl p-6 shadow-sm border border-stone-100 sm:grid-cols-2">
+    <>
+      <BrandHeader />
+      <form onSubmit={handleSubmit} className="mx-auto grid max-w-[760px] grid-cols-1 gap-x-5 bg-white rounded-2xl p-6 shadow-sm border border-stone-100 sm:grid-cols-2">
       <h2 className="font-serif text-xl font-medium text-slate-800 mb-6 sm:col-span-2">
         Add product
       </h2>
@@ -172,6 +175,7 @@ export default function AddProductCard({ onSave = () => {} }) {
       >
         {isSubmitting ? 'Saving...' : 'Save product'}
       </button>
-    </form>
+      </form>
+    </>
   );
 }

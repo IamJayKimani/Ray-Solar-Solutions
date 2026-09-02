@@ -1,9 +1,14 @@
-import { useState } from 'react';
-import { getProviders } from '../../data/providers';
+import { useEffect, useState } from 'react';
+import { fetchProviders, updateProviderStatus } from '../../data/providers';
 
 function ManageProviders() {
-  const [providers, setProviders] = useState(getProviders());
+  const [providers, setProviders] = useState([]);
   const [search, setSearch] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetchProviders().then(setProviders).catch((requestError) => setError(requestError.message));
+  }, []);
 
   const filtered = providers.filter(
     (provider) =>
@@ -11,17 +16,25 @@ function ManageProviders() {
       provider.status.toLowerCase().includes(search.toLowerCase())
   );
 
-  const toggleStatus = (id) => {
-    setProviders((prev) =>
-      prev.map((provider) =>
-        provider.id === id
-          ? {
-              ...provider,
-              status: provider.status === 'Verified' ? 'Suspended' : 'Verified',
-            }
-          : provider
-      )
-    );
+  const toggleStatus = async (id, currentStatus) => {
+    try {
+      const nextStatus = currentStatus === 'Verified';
+      await updateProviderStatus(id, nextStatus);
+
+      setProviders((prev) =>
+        prev.map((provider) =>
+          provider.id === id
+            ? {
+                ...provider,
+                is_active: nextStatus,
+                status: nextStatus ? 'Verified' : 'Suspended',
+              }
+            : provider
+        )
+      );
+    } catch (requestError) {
+      setError(requestError.message);
+    }
   };
 
   return (
@@ -32,6 +45,8 @@ function ManageProviders() {
           <h1>Manage providers</h1>
         </div>
       </div>
+
+      {error && <p className="form-error" role="alert">{error}</p>}
 
       <div className="filters-panel">
         <div className="search-field">
@@ -64,14 +79,14 @@ function ManageProviders() {
                 <td>{provider.email}</td>
                 <td>{provider.products}</td>
                 <td>
-                  <span className={`status-badge ${provider.status === 'Verified' ? 'success' : provider.status === 'Pending' ? '' : ''}`}>
+                  <span className={`status-badge ${provider.status === 'Verified' ? 'success' : ''}`}>
                     {provider.status}
                   </span>
                 </td>
                 <td>
                   <button
                     className="mini-btn"
-                    onClick={() => toggleStatus(provider.id)}
+                    onClick={() => toggleStatus(provider.id, provider.status)}
                   >
                     {provider.status === 'Verified' ? 'Suspend' : 'Verify'}
                   </button>

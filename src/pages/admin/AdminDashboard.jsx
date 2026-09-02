@@ -1,18 +1,27 @@
-import { getUsers } from '../../data/users';
-import { getProviders } from '../../data/providers';
-import { getProducts } from '../../data/products';
+import { useEffect, useState } from 'react';
+import { apiRequest } from '../../data/api';
 import StatCard from '../../components/dashboard/StatCard';
 
 function AdminDashboard() {
-  const users = getUsers();
-  const providers = getProviders();
-  const products = getProducts();
+  const [metrics, setMetrics] = useState({
+    total_users: 0,
+    total_customers: 0,
+    total_providers: 0,
+    total_products: 0,
+  });
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    apiRequest('/admin/analytics')
+      .then((data) => setMetrics(data))
+      .catch((requestError) => setError(requestError.message));
+  }, []);
 
   const stats = [
-    { title: 'Users', value: users.length.toLocaleString() },
-    { title: 'Providers', value: providers.length.toLocaleString() },
-    { title: 'Products', value: products.length.toLocaleString() },
-    { title: 'Revenue', value: 'KSh 8.9M' },
+    { title: 'Users', value: metrics.total_users.toLocaleString() },
+    { title: 'Customers', value: metrics.total_customers.toLocaleString() },
+    { title: 'Providers', value: metrics.total_providers.toLocaleString() },
+    { title: 'Products', value: metrics.total_products.toLocaleString() },
   ];
 
   return (
@@ -23,6 +32,8 @@ function AdminDashboard() {
           <h1>Platform analytics</h1>
         </div>
       </div>
+
+      {error && <p className="form-error" role="alert">{error}</p>}
 
       <div className="stats-grid">
         {stats.map((item) => (
@@ -41,24 +52,24 @@ function AdminDashboard() {
           </thead>
           <tbody>
             <tr>
-              <td>New users this month</td>
-              <td>142</td>
-              <td><span className="status-badge success">+18%</span></td>
+              <td>Registered users</td>
+              <td>{metrics.total_users}</td>
+              <td><span className="status-badge success">Live</span></td>
             </tr>
             <tr>
-              <td>New providers this month</td>
-              <td>8</td>
-              <td><span className="status-badge success">+12%</span></td>
+              <td>Customer accounts</td>
+              <td>{metrics.total_customers}</td>
+              <td><span className="status-badge success">Live</span></td>
             </tr>
             <tr>
-              <td>Products listed this month</td>
-              <td>37</td>
-              <td><span className="status-badge success">+24%</span></td>
+              <td>Provider accounts</td>
+              <td>{metrics.total_providers}</td>
+              <td><span className="status-badge success">Live</span></td>
             </tr>
             <tr>
-              <td>Support tickets</td>
-              <td>14</td>
-              <td><span className="status-badge success">-5%</span></td>
+              <td>Catalog products</td>
+              <td>{metrics.total_products}</td>
+              <td><span className="status-badge success">Live</span></td>
             </tr>
           </tbody>
         </table>
