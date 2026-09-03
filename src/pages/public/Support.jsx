@@ -13,7 +13,7 @@ function Support() {
   };
 
   return (
-    <div className="min-h-screen text-white">
+    <div className="min-h-screen bg-[#10162b] text-white">
       <div
         className="relative min-h-[360px] flex items-center justify-center text-center px-6"
         style={{
