@@ -1,63 +1,143 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
+import { deleteUser, fetchUsers, updateUserStatus } from '../../data/users';
+import { Search, Trash2 } from 'lucide-react';
 
-export default function UsersManagement({ users = [], onToggleUserStatus }) {
+function ManageUsers() {
+  const [users, setUsers] = useState([]);
+  const [search, setSearch] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    refreshUsers();
+  }, []);
+
+  const refreshUsers = async () => {
+    try {
+      setUsers(await fetchUsers());
+    } catch (requestError) {
+      setError(requestError.message);
+    }
+  };
+
+  const filtered = users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(search.toLowerCase()) ||
+      user.email.toLowerCase().includes(search.toLowerCase()) ||
+      user.role.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const toggleStatus = async (id, currentStatus) => {
+    try {
+      const nextStatus = currentStatus !== 'Active';
+      await updateUserStatus(id, nextStatus);
+
+      setUsers((prev) =>
+        prev.map((user) =>
+          user.id === id
+            ? { ...user, is_active: nextStatus, status: nextStatus ? 'Active' : 'Suspended' }
+            : user
+        )
+      );
+    } catch (requestError) {
+      if (requestError.message === 'User not found') {
+        await refreshUsers();
+        setError('That account is no longer available. The user list has been refreshed.');
+      } else {
+        setError(requestError.message);
+      }
+    }
+  };
+
+  const removeUser = async (user) => {
+    if (!window.confirm(`Delete ${user.name}? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      await deleteUser(user.id);
+      setUsers((prev) => prev.filter((currentUser) => currentUser.id !== user.id));
+    } catch (requestError) {
+      setError(requestError.message);
+    }
+  };
+
   return (
-    <main className="dashboard-main">
+    <>
       <div className="page-heading">
         <div>
-          <span className="eyebrow">Admin portal</span>
-          <h1>User Moderation</h1>
+          <span className="eyebrow">Users</span>
+          <h1>Manage users</h1>
         </div>
       </div>
 
-      <div className="ticket-list" style={{ background: '#fff', borderRadius: '8px', padding: '16px' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      {error && <p className="form-error" role="alert">{error}</p>}
+
+      <div className="filters-panel">
+        <div className="search-field">
+          <Search size={18} aria-hidden="true" />
+          <input
+            className="search-input"
+            type="text"
+            placeholder="Search users by name, email, or role..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="table-card">
+        <table>
           <thead>
-            <tr style={{ borderBottom: '2px solid #e2e8f0', textAlign: 'left' }}>
-              <th style={{ padding: '12px' }}>ID</th>
-              <th style={{ padding: '12px' }}>Email</th>
-              <th style={{ padding: '12px' }}>Role</th>
-              <th style={{ padding: '12px' }}>Status</th>
-              <th style={{ padding: '12px' }}>Actions</th>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {users.length === 0 ? (
-              <tr>
-                <td colSpan="5" style={{ padding: '20px', textAlign: 'center' }}>No users found.</td>
+            {filtered.map((user) => (
+              <tr key={user.id}>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.role}</td>
+                <td>
+                  <span className={`status-badge ${user.status === 'Active' ? 'success' : ''}`}>
+                    {user.status}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    className="mini-btn"
+                    onClick={() => toggleStatus(user.id, user.status)}
+                  >
+                    {user.status === 'Active' ? 'Suspend' : 'Activate'}
+                  </button>
+                  <button
+                    className="mini-btn"
+                    onClick={() => removeUser(user)}
+                    title={`Delete ${user.name}`}
+                    aria-label={`Delete ${user.name}`}
+                  >
+                    <Trash2 size={15} aria-hidden="true" />
+                    Delete
+                  </button>
+                </td>
               </tr>
-            ) : (
-              users.map((user) => (
-                <tr key={user.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
-                  <td style={{ padding: '12px' }}>#{user.id}</td>
-                  <td style={{ padding: '12px' }}>{user.email}</td>
-                  <td style={{ padding: '12px', textTransform: 'capitalize' }}>{user.role}</td>
-                  <td style={{ padding: '12px' }}>
-                    <span className={user.active ? 'status-badge success' : 'status-badge'}>
-                      {user.active ? 'Active' : 'Suspended'}
-                    </span>
-                  </td>
-                  <td style={{ padding: '12px' }}>
-                    <button
-                      onClick={() => onToggleUserStatus(user.id, !user.active)}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: '4px',
-                        border: 'none',
-                        color: '#fff',
-                        background: user.active ? '#ef4444' : '#22c55e',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      {user.active ? 'Suspend' : 'Activate'}
-                    </button>
-                  </td>
-                </tr>
-              ))
+            ))}
+            {filtered.length === 0 && (
+              <tr>
+                <td colSpan="5" style={{ textAlign: 'center', padding: '2rem' }}>
+                  No users found matching your search.
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
       </div>
-    </main>
+    </>
   );
 }
+
+export default ManageUsers;

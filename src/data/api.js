@@ -8,14 +8,53 @@ export const getImageUrl = (imagePath) => {
   return `${API_BASE_URL.replace('/api', '')}/${imagePath}`;
 };
 
+async function tryRefreshToken() {
+  const refreshToken = localStorage.getItem('ray-solar-refresh-token');
+  if (!refreshToken) return null;
+
+  try {
+    const response = await fetch(getApiUrl('/auth/refresh'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${refreshToken}`,
+      },
+    });
+
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    localStorage.setItem('ray-solar-access-token', data.access_token);
+    return data.access_token;
+  } catch {
+    return null;
+  }
+}
+
 export async function apiRequest(path, options = {}) {
-  const token = localStorage.getItem('ray-solar-access-token');
   const headers = new Headers(options.headers);
 
-  if (token) headers.set('Authorization', `Bearer ${token}`);
-  if (!(options.body instanceof FormData)) headers.set('Content-Type', 'application/json');
+  const buildHeaders = (token) => {
+    const h = new Headers(headers);
+    if (token) h.set('Authorization', `Bearer ${token}`);
+    if (!(options.body instanceof FormData)) h.set('Content-Type', 'application/json');
+    return h;
+  };
 
-  const response = await fetch(getApiUrl(path), { ...options, headers });
+  let token = localStorage.getItem('ray-solar-access-token');
+  let response = await fetch(getApiUrl(path), { ...options, headers: buildHeaders(token) });
+
+  if (response.status === 401) {
+    const data = await response.clone().json().catch(() => ({}));
+    const message = (data.error || data.msg || '').toLowerCase();
+    if (message.includes('expired')) {
+      const newToken = await tryRefreshToken();
+      if (newToken) {
+        response = await fetch(getApiUrl(path), { ...options, headers: buildHeaders(newToken) });
+      }
+    }
+  }
+
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
