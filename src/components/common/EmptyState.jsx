@@ -1,7 +1,9 @@
-function EmptyState({ icon = '📭', title = 'Nothing here yet', message, action }) {
+import { Inbox } from 'lucide-react';
+
+function EmptyState({ icon: Icon = Inbox, title = 'Nothing here yet', message, action }) {
   return (
     <div className="empty-state">
-      <span className="empty-state-icon" aria-hidden="true">{icon}</span>
+      <Icon className="empty-state-icon" aria-hidden="true" />
       <h3>{title}</h3>
       {message && <p>{message}</p>}
       {action && <div className="empty-state-action">{action}</div>}

@@ -1,131 +1,71 @@
-import { useState } from 'react';
 import { Outlet, Link } from 'react-router-dom';
-import {
-  ChevronsLeft,
-  ChevronsRight,
-  Home,
-  Info,
-  LogIn,
-  ShoppingBag,
-  Sparkles,
-  UserRoundPlus,
-} from 'lucide-react';
-
-const landingLinks = [
-  { to: '/', label: 'Home', icon: Home },
-  { to: '/products', label: 'Products', icon: ShoppingBag },
-  { to: '/products', label: 'Shop', icon: Sparkles },
-  { to: '/login', label: 'Login', icon: LogIn },
-  { to: '/register', label: 'Register', icon: UserRoundPlus },
-  { to: '/products', label: 'Support', icon: Info },
-];
+import GlobalSidebar from '../components/layout/GlobalSidebar';
 
 function PublicLayout() {
-  const [collapsed, setCollapsed] = useState(false);
-
   return (
-    <div className="app-shell">
-      <header className="topbar">
-        <div className="container nav-container">
-          <Link to="/" className="brand" aria-label="Ray Solar Solutions home">
-            <span className="brand-icon" aria-hidden="true">☀</span>
-            <span>
-              Ray Solar <strong>Solutions</strong>
-            </span>
+    <div className="min-h-screen flex flex-col">
+      <header className="sticky top-0 z-20 bg-[rgba(16,22,43,0.92)] backdrop-blur-xl border-b border-white/10">
+        <div className="max-w-[1200px] mx-auto flex items-center justify-between h-[82px] px-6 gap-5">
+          <Link to="/" className="inline-flex items-center gap-3 font-bold tracking-wide text-white">
+            <span className="text-2xl text-[#f5a623]">☀</span>
+            <span>Ray Solar <strong className="text-[#f5a623]">Solutions</strong></span>
           </Link>
 
-          <nav className="nav" aria-label="Main navigation">
-            <Link to="/">Home</Link>
-            <Link to="/products">Products</Link>
-            <Link to="/products">Shop</Link>
+          <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-white/75">
+            <Link to="/" className="hover:text-white transition">Home</Link>
+            <Link to="/products" className="hover:text-white transition">Products</Link>
+            <Link to="/about" className="hover:text-white transition">About</Link>
           </nav>
 
-          <div className="nav-actions">
-            <Link to="/login" className="btn btn-ghost">Login</Link>
-            <Link to="/register" className="btn btn-primary">Sign up</Link>
-            <Link to="/products" className="btn btn-primary">Shop now</Link>
+          <div className="flex items-center gap-3">
+            <Link to="/login" className="px-4 py-2 text-sm font-semibold text-white/80 hover:text-white transition">Login</Link>
+            <Link to="/register" className="px-5 py-2.5 rounded-xl bg-[#f5a623] hover:bg-[#d9820b] text-white text-sm font-bold transition">Sign up</Link>
           </div>
         </div>
       </header>
 
-      <main className="public-main">
-        <div className="landing-layout">
-          <aside className={`landing-sidebar ${collapsed ? 'collapsed' : ''}`} aria-label="Landing page navigation">
-            <div className="sidebar-topbar">
-              <div className="sidebar-logo">
-                <div className="sidebar-logo-mark">☀</div>
-                {!collapsed && <span>Ray Solar</span>}
-              </div>
-            </div>
-
-            <nav className="landing-nav" aria-label="Landing pages">
-              {landingLinks.map((item) => {
-                const Icon = item.icon;
-
-                return (
-                  <Link
-                    key={`${item.to}-${item.label}`}
-                    to={item.to}
-                    className="sidebar-nav-item"
-                    title={collapsed ? item.label : undefined}
-                  >
-                    <Icon className="sidebar-nav-icon" />
-                    {!collapsed && <span className="sidebar-nav-label">{item.label}</span>}
-                  </Link>
-                );
-              })}
-            </nav>
-
-            <div className="sidebar-footer">
-              <button type="button" className="sidebar-collapse-button" onClick={() => setCollapsed((value) => !value)}>
-                {collapsed ? <ChevronsRight className="sidebar-nav-icon" /> : <ChevronsLeft className="sidebar-nav-icon" />}
-                {!collapsed && <span>Collapse</span>}
-              </button>
-            </div>
-          </aside>
-
-          <div className="public-page-content">
-            <Outlet />
-          </div>
-        </div>
+      <main className="flex-1 ml-[72px]">
+        <Outlet />
       </main>
 
-      <footer className="site-footer">
-        <div className="container footer-grid">
+      <footer className="bg-[#10162b] text-white/70 ml-[72px]">
+        <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 px-6 py-14">
           <div>
-            <div className="brand footer-brand">
-              <span className="brand-icon" aria-hidden="true">☀</span>
+            <div className="flex items-center gap-3 font-bold text-white mb-4">
+              <span className="text-xl">☀</span>
               <span>Ray Solar</span>
             </div>
-            <p>Brightening communities with sustainable solar lighting for homes, workspaces and public areas.</p>
+            <p className="text-sm leading-relaxed">Brightening communities with sustainable solar lighting for homes, workspaces and public areas.</p>
           </div>
           <div>
-            <h4>Explore</h4>
-            <ul>
-              <li><Link to="/products">Products</Link></li>
-              <li><Link to="/">Benefits</Link></li>
-              <li><Link to="/account-selection">Accounts</Link></li>
+            <h4 className="text-white font-bold mb-4">Explore</h4>
+            <ul className="grid gap-2 text-sm">
+              <li><Link to="/products" className="hover:text-white transition">Products</Link></li>
+              <li><Link to="/about" className="hover:text-white transition">About Us</Link></li>
+              <li><Link to="/login" className="hover:text-white transition">Login</Link></li>
             </ul>
           </div>
           <div>
-            <h4>Company</h4>
-            <ul>
+            <h4 className="text-white font-bold mb-4">Company</h4>
+            <ul className="grid gap-2 text-sm">
               <li>About us</li>
               <li>Support</li>
               <li>Contact</li>
             </ul>
           </div>
           <div>
-            <h4>Contact</h4>
-            <ul>
+            <h4 className="text-white font-bold mb-4">Contact</h4>
+            <ul className="grid gap-2 text-sm">
               <li>hello@raysolar.co</li>
               <li>+254 700 000 000</li>
               <li>Nairobi, Kenya</li>
             </ul>
           </div>
         </div>
-        <div className="footer-bottom">© 2026 Ray Solar Solutions. Powered by clean energy.</div>
+        <div className="text-center text-xs py-5 border-t border-white/[0.08]">© 2026 Ray Solar Solutions. Powered by clean energy.</div>
       </footer>
+
+      <GlobalSidebar />
     </div>
   );
 }

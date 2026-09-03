@@ -34,6 +34,7 @@ function LoginForm() {
 
       localStorage.setItem('ray-solar-role', accountRole);
       localStorage.setItem('ray-solar-access-token', data.access_token);
+      localStorage.setItem('ray-solar-refresh-token', data.refresh_token);
       navigate(destination);
     } catch (requestError) {
       setError(requestError.message);

@@ -24,3 +24,9 @@ export const updateUserStatus = async (userId, isActive) => {
     body: JSON.stringify({ is_active: isActive }),
   });
 };
+
+export const deleteUser = async (userId) => {
+  return apiRequest(`/admin/users/${userId}`, {
+    method: 'DELETE',
+  });
+};

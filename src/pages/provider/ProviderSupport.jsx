@@ -5,38 +5,21 @@ function ProviderSupport() {
   ];
 
   return (
-    <div className="dashboard-shell container">
-      <aside className="dashboard-sidebar">
-        <h2>Provider</h2>
-        <nav>
-          <a href="/provider">Overview</a>
-          <a href="/provider/products">Manage products</a>
-          <a href="/provider/products/add">Add product</a>
-          <a href="/provider/profile">Profile</a>
-          <a href="/provider/support">Support</a>
-        </nav>
-      </aside>
-
-      <main className="dashboard-main">
-        <div className="page-heading">
-          <div>
-            <span className="eyebrow">Support desk</span>
-            <h1>Inbox</h1>
-          </div>
-        </div>
-
-        <div className="ticket-list">
-          {support.map((item) => (
-            <div className="ticket-item" key={item.title}>
+    <div className="p-8">
+      <h1 className="text-2xl font-bold text-[#10162b] mb-8">Support</h1>
+      <div className="space-y-4">
+        {support.map((item) => (
+          <div key={item.title} className="bg-white rounded-2xl border border-gray-200 p-5">
+            <div className="flex items-center justify-between">
               <div>
-                <h3>{item.title}</h3>
-                <p>Customer from Nairobi</p>
+                <h3 className="text-sm font-bold text-[#10162b]">{item.title}</h3>
+                <p className="text-xs text-[#4a5565] mt-0.5">Customer from Nairobi</p>
               </div>
-              <span className="status-badge success">{item.status}</span>
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-50 text-green-700">{item.status}</span>
             </div>
-          ))}
-        </div>
-      </main>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { Store, UserRound } from 'lucide-react';
 
 const roleRoutes = {
   customer: '/customer',
@@ -90,7 +91,7 @@ function RegisterForm() {
             className={`role-card ${role === 'customer' ? 'active' : ''}`}
             onClick={() => setRole('customer')}
           >
-            <span className="role-icon">👤</span>
+            <UserRound className="role-icon" aria-hidden="true" />
             <strong>Customer</strong>
             <small>Browse and purchase solar products</small>
           </button>
@@ -100,7 +101,7 @@ function RegisterForm() {
             className={`role-card ${role === 'provider' ? 'active' : ''}`}
             onClick={() => setRole('provider')}
           >
-            <span className="role-icon">🏪</span>
+            <Store className="role-icon" aria-hidden="true" />
             <strong>Provider</strong>
             <small>Manage inventory and add products</small>
           </button>

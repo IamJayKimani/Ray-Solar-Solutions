@@ -16,13 +16,13 @@ function Footer() {
           <ul>
             <li><Link to="/products">Products</Link></li>
             <li><Link to="/">Benefits</Link></li>
-            <li><Link to="/account-selection">Accounts</Link></li>
+            <li><Link to="/login">Login</Link></li>
           </ul>
         </div>
         <div>
           <h4>Company</h4>
           <ul>
-            <li>About us</li>
+            <li><Link to="/about">About Us</Link></li>
             <li>Support</li>
             <li>Contact</li>
           </ul>

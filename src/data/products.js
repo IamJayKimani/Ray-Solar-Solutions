@@ -219,18 +219,18 @@ const normalizeProduct = (product) => ({
 });
 
 export const fetchProducts = async () => {
-  const data = await apiRequest('/products');
+  const data = await apiRequest('/products?per_page=100');
   return data.products.map(normalizeProduct);
 };
 
 export const fetchAdminProducts = async () => {
-  const data = await apiRequest('/admin/products');
+  const data = await apiRequest('/admin/products?per_page=100');
   return data.products.map(normalizeProduct);
 };
 
 export const fetchProviderProducts = async () => {
   const currentUser = await apiRequest('/auth/me');
-  const data = await apiRequest('/products');
+  const data = await apiRequest('/products?per_page=100');
 
   return data.products
     .filter((product) => product.provider_id === currentUser.user.id)
