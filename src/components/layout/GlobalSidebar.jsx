@@ -22,6 +22,7 @@ const publicLinks = [
   { to: '/', icon: Home, label: 'Home' },
   { to: '/products', icon: ShoppingBag, label: 'Products' },
   { to: '/about', icon: Info, label: 'About' },
+  { to: '/support', icon: Headphones, label: 'Support' },
   { to: '/login', icon: LogIn, label: 'Login' },
   { to: '/register', icon: UserPlus, label: 'Register' },
 ];
@@ -44,7 +45,7 @@ const providerLinks = [
   { to: '/provider', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/provider/products', icon: Package, label: 'My products' },
   { to: '/provider/profile', icon: User, label: 'Profile' },
-  { to: '/customer/support', icon: Headphones, label: 'Support' },
+  { to: '/support', icon: Headphones, label: 'Support' },
 ];
 
 const adminLinks = [

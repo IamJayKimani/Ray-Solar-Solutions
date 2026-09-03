@@ -5,12 +5,13 @@ import Home from '../pages/public/Home';
 import Products from '../pages/public/Products';
 import ProductDetails from '../pages/public/ProductDetails';
 import About from '../pages/public/About';
+import Support from '../pages/public/Support';
 import CustomerDashboard from '../pages/customer/CustomerDashboard';
 import Cart from '../pages/customer/Cart';
 import Orders from '../pages/customer/Orders';
 import OrderDetail from '../pages/customer/OrderDetail';
 import Profile from '../pages/customer/Profile';
-import Support from '../pages/customer/Support';
+import CustomerSupport from '../pages/customer/Support';
 import ProviderDashboard from '../pages/provider/ProviderDashboard';
 import ManageProviderProducts from '../pages/provider/ManageProducts';
 import AddProduct from '../pages/provider/AddProduct';
@@ -48,6 +49,7 @@ function AppRoutes() {
         <Route path="/products" element={<Products />} />
         <Route path="/products/:id" element={<ProductDetails />} />
         <Route path="/about" element={<About />} />
+        <Route path="/support" element={<Support />} />
       </Route>
 
       <Route element={<DashboardLayout />}>
@@ -95,7 +97,7 @@ function AppRoutes() {
           path="/customer/support"
           element={
             <ProtectedRoleRoute allowedRoles={['customer']}>
-              <Support />
+              <CustomerSupport />
             </ProtectedRoleRoute>
           }
         />

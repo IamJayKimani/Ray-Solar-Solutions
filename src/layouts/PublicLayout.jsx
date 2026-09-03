@@ -111,7 +111,7 @@ function PublicLayout() {
             <h4 className="text-white font-bold mb-4">Company</h4>
             <ul className="grid gap-2 text-sm">
               <li><Link to="/about" className="hover:text-white transition">About Us</Link></li>
-              <li><a href="mailto:hello@raysolar.co" className="hover:text-white transition">Support</a></li>
+              <li><Link to="/support" className="hover:text-white transition">Support</Link></li>
               <li><a href="mailto:hello@raysolar.co" className="hover:text-white transition">Contact</a></li>
             </ul>
           </div>
