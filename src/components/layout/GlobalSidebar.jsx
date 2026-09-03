@@ -14,6 +14,7 @@ import {
   LogIn,
   UserPlus,
   Info,
+  Mail,
 } from 'lucide-react';
 
 const ROLE_KEY = 'ray-solar-role';
@@ -56,6 +57,7 @@ const adminLinks = [
   { to: '/admin/users', icon: Users, label: 'Users' },
   { to: '/admin/providers', icon: Building2, label: 'Providers' },
   { to: '/admin/products', icon: Package, label: 'Products' },
+  { to: '/admin/messages', icon: Mail, label: 'Messages' },
 ];
 
 function getLinks() {

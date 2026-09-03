@@ -21,6 +21,7 @@ import AdminDashboard from '../pages/admin/AdminDashboard';
 import ManageUsers from '../pages/admin/ManageUsers';
 import ManageProviders from '../pages/admin/ManageProviders';
 import ManageProducts from '../pages/admin/ManageProducts';
+import ManageMessages from '../pages/admin/ManageMessages';
 import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
 import ForgotPassword from '../pages/auth/ForgotPassword';
@@ -147,6 +148,7 @@ function AppRoutes() {
         <Route path="/admin/users" element={<ProtectedRoleRoute allowedRoles={['admin']}><ManageUsers /></ProtectedRoleRoute>} />
         <Route path="/admin/providers" element={<ProtectedRoleRoute allowedRoles={['admin']}><ManageProviders /></ProtectedRoleRoute>} />
         <Route path="/admin/products" element={<ProtectedRoleRoute allowedRoles={['admin']}><ManageProducts /></ProtectedRoleRoute>} />
+        <Route path="/admin/messages" element={<ProtectedRoleRoute allowedRoles={['admin']}><ManageMessages /></ProtectedRoleRoute>} />
       </Route>
 
       <Route path="/login" element={<Login />} />

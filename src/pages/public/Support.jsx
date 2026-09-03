@@ -1,15 +1,35 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
+import { Send, CheckCircle } from 'lucide-react';
+import { getApiUrl } from '../../data/api';
 
 function Support() {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
+  const [sending, setSending] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
-    setForm({ name: '', email: '', subject: '', message: '' });
+    setSending(true);
+    setError('');
+    try {
+      const res = await fetch(getApiUrl('/support/contact'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to send message');
+      }
+      setSubmitted(true);
+      setForm({ name: '', email: '', subject: '', message: '' });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -51,6 +71,10 @@ function Support() {
             <p className="font-semibold">Nairobi, Kenya</p>
           </div>
         </div>
+
+        {error && (
+          <div className="mb-6 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium text-left">{error}</div>
+        )}
 
         {submitted ? (
           <div className="bg-white/5 border border-white/10 rounded-2xl p-12">
@@ -101,10 +125,11 @@ function Support() {
             <div className="pt-2">
               <button
                 type="submit"
-                className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-[#f5a623] hover:bg-[#d9820b] text-white text-sm font-bold transition"
+                disabled={sending}
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-[#f5a623] hover:bg-[#d9820b] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-bold transition"
               >
                 <Send size={16} />
-                Send message
+                {sending ? 'Sending...' : 'Send message'}
               </button>
             </div>
           </form>
