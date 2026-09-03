@@ -150,9 +150,6 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-
-      {/* Person 6 (Admin) Route */}
-      <Route path="/admin" element={<AdminDashboard />} />
     </Routes>
   );
 }

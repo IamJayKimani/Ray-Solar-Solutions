@@ -104,22 +104,22 @@ function PublicLayout() {
             <ul className="grid gap-2 text-sm">
               <li><Link to="/products" className="hover:text-white transition">Products</Link></li>
               <li><Link to="/about" className="hover:text-white transition">About Us</Link></li>
-              <li><Link to="/login" className="hover:text-white transition">Login</Link></li>
+              {!loggedIn && <li><Link to="/login" className="hover:text-white transition">Login</Link></li>}
             </ul>
           </div>
           <div>
             <h4 className="text-white font-bold mb-4">Company</h4>
             <ul className="grid gap-2 text-sm">
-              <li>About us</li>
-              <li>Support</li>
-              <li>Contact</li>
+              <li><Link to="/about" className="hover:text-white transition">About Us</Link></li>
+              <li><a href="mailto:hello@raysolar.co" className="hover:text-white transition">Support</a></li>
+              <li><a href="mailto:hello@raysolar.co" className="hover:text-white transition">Contact</a></li>
             </ul>
           </div>
           <div>
             <h4 className="text-white font-bold mb-4">Contact</h4>
             <ul className="grid gap-2 text-sm">
-              <li>hello@raysolar.co</li>
-              <li>+254 700 000 000</li>
+              <li><a href="mailto:hello@raysolar.co" className="hover:text-white transition">hello@raysolar.co</a></li>
+              <li><a href="tel:+254700000000" className="hover:text-white transition">+254 700 000 000</a></li>
               <li>Nairobi, Kenya</li>
             </ul>
           </div>
