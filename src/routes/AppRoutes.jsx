@@ -40,9 +40,6 @@ function ProtectedRoleRoute({ allowedRoles, children }) {
   return children;
 }
 
-// Person 6 (Admin) Import
-import AdminDashboard from '../pages/admin/AdminDashboard';
-
 function AppRoutes() {
   return (
     <Routes>

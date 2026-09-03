@@ -1,7 +1,33 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { User, LogOut, ChevronDown } from 'lucide-react';
 import GlobalSidebar from '../components/layout/GlobalSidebar';
 
+const TOKEN_KEY = 'ray-solar-access-token';
+const ROLE_KEY = 'ray-solar-role';
+
 function PublicLayout() {
+  const [loggedIn, setLoggedIn] = useState(!!localStorage.getItem(TOKEN_KEY));
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const onStorage = () => setLoggedIn(!!localStorage.getItem(TOKEN_KEY));
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem('ray-solar-refresh-token');
+    localStorage.removeItem(ROLE_KEY);
+    setMenuOpen(false);
+    navigate('/');
+  };
+
+  const role = localStorage.getItem(ROLE_KEY);
+  const profilePath = role === 'admin' ? '/admin/profile' : role === 'provider' ? '/provider/profile' : '/customer/profile';
+
   return (
     <div className="min-h-screen flex flex-col">
       <header className="sticky top-0 z-20 bg-[rgba(16,22,43,0.92)] backdrop-blur-xl border-b border-white/10">
@@ -17,9 +43,45 @@ function PublicLayout() {
             <Link to="/about" className="hover:text-white transition">About</Link>
           </nav>
 
-          <div className="flex items-center gap-3">
-            <Link to="/login" className="px-4 py-2 text-sm font-semibold text-white/80 hover:text-white transition">Login</Link>
-            <Link to="/register" className="px-5 py-2.5 rounded-xl bg-[#f5a623] hover:bg-[#d9820b] text-white text-sm font-bold transition">Sign up</Link>
+          <div className="flex items-center gap-3 relative">
+            {loggedIn ? (
+              <>
+                <button
+                  onClick={() => setMenuOpen(!menuOpen)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm font-semibold transition"
+                >
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#f5a623] to-[#d9820b] flex items-center justify-center text-white text-xs font-bold">
+                    <User size={14} />
+                  </div>
+                  <ChevronDown size={14} />
+                </button>
+                {menuOpen && (
+                  <>
+                    <div className="fixed inset-0 z-30" onClick={() => setMenuOpen(false)} />
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-[#1a2240] border border-white/10 rounded-xl shadow-2xl z-40 py-2 overflow-hidden">
+                      <Link
+                        to={profilePath}
+                        onClick={() => setMenuOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/80 hover:bg-white/10 hover:text-white transition"
+                      >
+                        <User size={15} /> Profile
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 hover:bg-white/10 hover:text-red-300 transition w-full"
+                      >
+                        <LogOut size={15} /> Logout
+                      </button>
+                    </div>
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="px-4 py-2 text-sm font-semibold text-white/80 hover:text-white transition">Login</Link>
+                <Link to="/register" className="px-5 py-2.5 rounded-xl bg-[#f5a623] hover:bg-[#d9820b] text-white text-sm font-bold transition">Sign up</Link>
+              </>
+            )}
           </div>
         </div>
       </header>
