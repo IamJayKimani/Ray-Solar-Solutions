@@ -1,65 +1,65 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-export default function ProductsModeration({ products = [], onToggleProductStatus }) {
+export function ManageProducts() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [products] = useState([
+    { id: 'PRD-100', title: '400W Monocrystalline Panel', provider: 'Helios Solar Tech', price: '$220', stock: 45 },
+    { id: 'PRD-101', title: '5kW Inverter Unit', provider: 'Apex Energy Systems', price: '$850', stock: 12 },
+    { id: 'PRD-102', title: 'Lithium Battery Storage 10kWh', provider: 'BrightGrid Power', price: '$2,400', stock: 8 },
+  ]);
+
+  const filteredProducts = products.filter(p =>
+    p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.provider.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <main className="dashboard-main">
-      <div className="page-heading">
-        <div>
-          <span className="eyebrow">Admin portal</span>
-          <h1>Product Moderation</h1>
-        </div>
-      </div>
+    <div className="dashboard-shell container">
+      <aside className="dashboard-sidebar">
+        <h2>Admin Portal</h2>
+        <nav>
+          <a href="/admin">Overview</a>
+          <a href="/admin/users">Manage Users</a>
+          <a href="/admin/providers">Manage Providers</a>
+          <a href="/admin/products" className="active">Manage Products</a>
+        </nav>
+      </aside>
 
-      <div className="ticket-list" style={{ background: '#fff', borderRadius: '8px', padding: '16px' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <main className="dashboard-main">
+        <h1>Manage Products</h1>
+        <input
+          type="text"
+          placeholder="Filter products by title or provider..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ width: '100%', maxWidth: '360px', padding: '8px 12px', margin: '1rem 0', borderRadius: '4px', border: '1px solid #ccc' }}
+        />
+
+        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
-            <tr style={{ borderBottom: '2px solid #e2e8f0', textAlign: 'left' }}>
-              <th style={{ padding: '12px' }}>ID</th>
-              <th style={{ padding: '12px' }}>Product Title</th>
-              <th style={{ padding: '12px' }}>Category</th>
-              <th style={{ padding: '12px' }}>Price</th>
-              <th style={{ padding: '12px' }}>Status</th>
-              <th style={{ padding: '12px' }}>Actions</th>
+            <tr style={{ borderBottom: '2px solid #cbd5e1' }}>
+              <th style={{ padding: '8px' }}>Product ID</th>
+              <th style={{ padding: '8px' }}>Title</th>
+              <th style={{ padding: '8px' }}>Provider</th>
+              <th style={{ padding: '8px' }}>Price</th>
+              <th style={{ padding: '8px' }}>Stock</th>
             </tr>
           </thead>
           <tbody>
-            {products.length === 0 ? (
-              <tr>
-                <td colSpan="6" style={{ padding: '20px', textAlign: 'center' }}>No products available.</td>
+            {filteredProducts.map((prod) => (
+              <tr key={prod.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                <td style={{ padding: '8px', fontWeight: 'bold' }}>{prod.id}</td>
+                <td style={{ padding: '8px' }}>{prod.title}</td>
+                <td style={{ padding: '8px' }}>{prod.provider}</td>
+                <td style={{ padding: '8px' }}>{prod.price}</td>
+                <td style={{ padding: '8px' }}>{prod.stock}</td>
               </tr>
-            ) : (
-              products.map((product) => (
-                <tr key={product.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
-                  <td style={{ padding: '12px' }}>#{product.id}</td>
-                  <td style={{ padding: '12px' }}>{product.name}</td>
-                  <td style={{ padding: '12px' }}>{product.category || 'Solar'}</td>
-                  <td style={{ padding: '12px' }}>${product.price}</td>
-                  <td style={{ padding: '12px' }}>
-                    <span className={product.active ? 'status-badge success' : 'status-badge'}>
-                      {product.active ? 'Live' : 'Hidden'}
-                    </span>
-                  </td>
-                  <td style={{ padding: '12px' }}>
-                    <button
-                      onClick={() => onToggleProductStatus(product.id, !product.active)}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: '4px',
-                        border: 'none',
-                        color: '#fff',
-                        background: product.active ? '#ef4444' : '#22c55e',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      {product.active ? 'Unpublish' : 'Publish'}
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
+            ))}
           </tbody>
         </table>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
+
+export default ManageProducts;
