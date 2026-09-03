@@ -13,14 +13,26 @@ function Support() {
   };
 
   return (
-    <div className="min-h-screen bg-[#10162b] text-white">
-      <div className="max-w-[700px] mx-auto px-6 py-16 text-center">
-        <h1 className="text-3xl font-bold mb-4">Contact Us</h1>
-        <p className="text-white/60 text-base leading-relaxed mb-10">
-          Have a question about buying, selling, or verifying a product? Send us a message and the Ray Solar
-          support team will respond within 24 hours.
-        </p>
+    <div className="min-h-screen text-white">
+      <div
+        className="relative min-h-[360px] flex items-center justify-center text-center px-6"
+        style={{
+          backgroundImage: 'url(https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1400&q=80)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        <div className="absolute inset-0 bg-[#10162b]/80" />
+        <div className="relative z-10 max-w-[600px]">
+          <h1 className="text-3xl font-bold mb-4">Contact Us</h1>
+          <p className="text-white/60 text-base leading-relaxed">
+            Have a question about buying, selling, or verifying a product? Send us a message and the Ray Solar
+            support team will respond within 24 hours.
+          </p>
+        </div>
+      </div>
 
+      <div className="max-w-[700px] mx-auto px-6 py-12 text-center">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10 text-left">
           <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
             <p className="text-white/50 text-xs font-bold uppercase tracking-wide mb-2">Email</p>
